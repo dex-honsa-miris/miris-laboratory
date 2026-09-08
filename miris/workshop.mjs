@@ -1,6 +1,8 @@
 import { normaliseBank } from './specimens.mjs';
+import { BUILD_LESSONS } from './snippets.mjs';
+import { hasVerifiedViewerKey } from './viewerKeys.mjs';
 
-export const FLOW_VERSION = 2;
+export const FLOW_VERSION = 3;
 export const activeSeries = (data) => data.previewSeries || data;
 const text = (value, min, max, label) => {
   if (typeof value !== 'string' || value.trim().length < min || value.trim().length > max) throw new Error(`${label} needs ${min}–${max} characters.`);
@@ -35,6 +37,11 @@ export function chooseSource(data, value, fixtures) {
 }
 
 export function saveWorkshop(data, key, value) {
+  if (key === 'build') {
+    if (!BUILD_LESSONS.includes(value?.lesson)) throw new Error('Choose a known code exercise.');
+    const observation = text(value?.observation, 8, 1200, 'Your code change and observation');
+    return answer(data, 'build', { ...data.workshopAnswers?.build, [value.lesson]: observation });
+  }
   if (['firstStream','tradeoff'].includes(key)) return answer(data,key,text(value,8,1200,'Your observation'));
   if (key === 'attribution') {
     if (value !== 'streaming') throw new Error('Miris processes and streams the assets. Generation and the room interface are separate parts of the experience.');
@@ -74,6 +81,7 @@ export function saveWorkshop(data, key, value) {
 }
 
 export function checkWorkshop(data, key) {
+  if (key === 'keys') return hasVerifiedViewerKey(data) ? null : 'Discover the assets with a scoped viewer key, inspect them, and connect the list.';
   if (key === 'source') return ['prepared','generate','own'].includes(data.workshopPath) ? null : 'Choose how you want to get your specimens.';
   if (key === 'publish' && !data.publishedUrl) return 'Publish your lab and save its public link.';
   if (key === 'reflection' && !data.workshopAnswers?.publish) return 'Save and verify your published link before finishing.';

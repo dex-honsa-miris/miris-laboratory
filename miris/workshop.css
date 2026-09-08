@@ -58,3 +58,13 @@
   .mw-panel { inset: 0 0 0 auto; width: min(408px, 65vw); height: 100dvh; }
   .mw-panel .mw-bar { display: none; }
 }
+.mw-coding-lesson { margin-top: 22px; font-size: 13px; line-height: 1.65; }
+.mw-coding-lesson h4 { margin: 0 0 8px; color: #d8eeff; font-size: 13px; font-weight: 550; }
+.mw-coding-lesson .mw-activity-box h4:not(:first-child) { margin-top: 18px; }
+.mw-coding-lesson p { overflow-wrap: anywhere; }
+.mw-agent-prompt { border-left: 2px solid #7bb9db; padding-left: 16px; }
+.mw-agent-prompt p { margin: 0 0 14px; }
+.mw-code-observation { margin-top: 24px; }
+.mw-lesson-code { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; line-height: 1.6; padding: 14px; background: #080e13; }
+.mw-reference-link { display: block; margin-top: 28px; color: #b4dff6; font-size: 13px; line-height: 1.6; }
+.mw-reference-return { position: fixed; top: max(16px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right)); z-index: 30; max-width: calc(100vw - 32px); padding: 12px 16px; border: 1px solid #456071; border-radius: 6px; background: #102330; color: #d8eeff; font: 13px/1.5 system-ui,sans-serif; }

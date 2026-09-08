@@ -53,7 +53,7 @@ const FLAG = "chrome://flags/#canvas-draw-element";
 /* Which drawing path actually ran, read from the module store rather than
  * re-detected: detection can say yes and the call can still throw. Shown on the
  * happy path too, so an attendee who did the setup gets confirmation. */
-function RenderPathBadge() {
+export function RenderPathBadge() {
   const path = useSyncExternalStore(subscribePath, getPath, getPath);
   const { engine, flaggable } = detect();
 

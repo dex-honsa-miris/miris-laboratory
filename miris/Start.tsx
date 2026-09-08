@@ -43,7 +43,7 @@ function LaboratoryReel() {
     <figure className="mw-reel">
       <div className="mw-reel-picture">
         <img src="/tracks/laboratory-poster.jpg" width="1280" height="720"
-          alt="The actual workshop laboratory: blue-lit specimen capsules, steel walkway and research terminals."
+          alt="The completed reference laboratory: blue-lit specimen capsules, steel walkway and research terminals."
           fetchPriority="high" decoding="async" />
         {load && !failed && <video ref={video} src="/tracks/laboratory-reel.mp4" muted loop playsInline
           preload="metadata" aria-label="Four camera views of the completed laboratory" aria-describedby="mw-reel-caption"
@@ -66,7 +66,7 @@ function LaboratoryReel() {
         </div>
         <div className="mw-reel-progress" aria-hidden="true"><i style={{ width: `${Math.min(100, seconds / 24 * 100)}%` }} /></div>
       </div>
-      <figcaption id="mw-reel-caption"><span>The world you’ll make your own.</span><span>Captured in the workshop · 24-second film</span></figcaption>
+      <figcaption id="mw-reel-caption"><span>Your destination: the completed reference.</span><span>Captured in the workshop · 24-second film</span></figcaption>
     </figure>
   );
 }
@@ -85,23 +85,24 @@ export default function Start({ onChoose, note }: { onChoose: (id: string) => vo
     <main className="mw-welcome">
       <header className="mw-welcome-header">
         <img src="/kit/assets/miris-logo-white.svg" alt="Miris" width="84" height="28" />
-        <span>Spatial streaming workshop <i aria-hidden="true">/</i> 2 hours</span>
+        <span>Agent-assisted coding workshop <i aria-hidden="true">/</i> 2 hours</span>
       </header>
       <div className="mw-welcome-main">
         <section className="mw-welcome-intro" aria-labelledby="mw-welcome-title">
           <p className="mw-welcome-location">Welcome to Sublevel 7</p>
           <h1 id="mw-welcome-title">Build a living laboratory.</h1>
-          <p className="mw-welcome-description">Step inside a streaming world. Make it yours, then share it. Start with prepared specimens or create a creature of your own.</p>
+          <p className="mw-welcome-description">Build with the Miris SDK, one code change at a time. Extend the scene, connect streams, paint HTML onto pedestals, and write a shader. Your agent helps; you inspect, change and run the code.</p>
           <button type="button" className="mw-welcome-enter" onClick={enter} disabled={entering}>
-            {entering ? "Opening the laboratory…" : "Enter the laboratory"}<span aria-hidden="true">↗</span>
+            {entering ? "Opening your workspace…" : "Start building"}<span aria-hidden="true">↗</span>
           </button>
-          <p className="mw-welcome-detail">Prepared specimens included. Code and generation are optional.</p>
+          <p className="mw-welcome-detail">Prepared specimens included. Coding is the workshop; generation is optional.</p>
+          <p className="mw-welcome-detail"><a href="/?view=reference" target="_blank" rel="noopener noreferrer">Explore the completed reference ↗</a></p>
           {(error || note) && <p className="mw-welcome-note" role="status">{error || note}</p>}
         </section>
         <LaboratoryReel />
       </div>
       <footer className="mw-welcome-footer">
-        <p>A world from start to stream.</p>
+        <p>Discover. Write. Inspect. Run. Share.</p>
         <ol aria-label="Workshop chapters">{STEPS.map(step => <li key={step.num}><span>{step.num}</span>{step.title}</li>)}</ol>
       </footer>
     </main>

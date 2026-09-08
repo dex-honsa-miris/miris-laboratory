@@ -1,75 +1,65 @@
 # Spatial Streaming
 
-A two hour workshop for a mixed audience. Explore real Miris streams, choose
-prepared specimens or create your own, personalize a laboratory, and publish
-an experience you can share.
+A two hour, agent-assisted coding workshop. Build a laboratory with the Miris
+SDK: discover assets with a scoped viewer key, extend `MirisScene`, connect
+streams, paint HTML onto physical pedestals, write a TSL screen effect, and
+publish a scene someone else can visit.
 
-```
+```sh
 npm install
 npm run dev
 ```
 
-Then follow the guide. Start with a real stream, personalize the supplied room,
-and publish. The optional code studio explains the implementation.
+Follow the guide with `app/stage.tsx` open. Each coding exercise asks you to
+prompt your agent, inspect the diff, make a personal change, run it, and save
+an observation. Prepared specimens remove the need to pay for generation.
+Writing and understanding the integration is the workshop.
 
-## The core journey
+## The two hour build
 
-This branch starts with the completed room as a supplied foundation. Attendees
-make it their own through a name, a viewing style, specimen curation, and a
-published experience. Code and paid generation are optional.
-
-| Time | Core activity | Takeaway |
+| Time | Required work | Result |
 |---|---|---|
-| 0–10 min | Enter the real prepared lab; predict, change the budget, observe | What Miris streaming contributes |
-| 10–30 min | Choose prepared, generated, or existing assets; personalize the lab | Ownership without a setup gate |
-| 30–55 min | Connect assets when ready; name a specimen and write its observation | Content, delivery, and presentation are separate |
-| 55–90 min | Compare budgets and viewpoints; optionally explore the code studio | A concrete tradeoff and an integration starting point |
-| 90–105 min | Publish and check a public link | A working experience outside the editor |
-| 105–120 min | Exchange links, try another device, record takeaways | A visitor’s response and a next-project idea |
+| 0–15 min | Choose content; initialize `MirisScene`, await `ready`, inspect `fetchAssets` | An explicit scoped viewer key and confirmed asset list |
+| 15–35 min | Write `LaboratoryScene extends MirisScene`; compose room and capsules | An SDK subclass used by the actual Canvas scene |
+| 35–55 min | Add one `MirisStream`, map six, fit their bounds | Assets placed by your `specimenPosition` method |
+| 55–80 min | Write dossier HTML; call `useHtmlTexture`; mount a `File` on pedestals | Readable HTML inside the 3D room |
+| 80–100 min | Write and apply a TSL graph; build a readout and compare budgets | A personal blue CRT effect and a recorded tradeoff |
+| 100–120 min | Publish; test on a phone; exchange links and explain your code | A public experience and a reusable SDK integration |
 
-Every attendee can finish with the prepared six-stage series. Entering the lab
-uses the recorded real UUIDs and their scoped viewer key from `miris/fixtures.json`.
-It does not call fal, require an account, or create an archive. Existing specimen
-data is preserved when entering the new flow. The visible `previewSeries` is
-separate from an optional generation run, so switching to prepared specimens does
-not erase a paid run; submitted jobs keep running in the background.
+The opening film shows the completed reference, not the attendee starting
+state. `app/stage.tsx` starts incomplete and matches
+`miris/stage.template.tsx`, which reset restores. The completed implementation
+is `miris/stage.reference.tsx`. Recovery snippets can restore a missing lesson
+block; after using one, inspect it, make the required variation, and observe
+it running. A successful insertion alone is not an exercise outcome.
 
-The ordinary guide leads through the core activities. **Optional code studio**
-contains the original technical lessons for SDK integration, scene construction,
-HTML-in-Canvas, and TSL. Those lessons are references, not gates to publishing.
-The complete reference copy lives in `miris/technicalCurriculum.ts`.
+Prepared content comes from `miris/fixtures.json`. Attendees still perform
+viewer-key discovery and confirm the asset order. Viewer keys are deliberately
+browser-readable and should be scoped to the assets being shared. Do not use
+service authentication tokens or fal credentials as viewer keys.
+
+The display bank (`previewSeries`) is separate from optional generation data.
+Choosing or discovering display assets does not erase a paid run or its archive;
+submitted generation jobs can continue while you build.
 
 ## Before you arrive
 
-- Use a laptop, a current browser, and a charger. Running locally requires Node
-  20 or newer; in Bolt the environment is supplied.
-- Prepared specimens need no generation account or payment. Have presenters
-  verify the configured viewer key and all six streams on the venue network.
-- For **optional generation**, prepare a fal.ai account with billing and a key.
-  The guide explains `.env.local`; the key is needed only when Grow is pressed.
-  Budget roughly twelve dollars and twelve minutes for the workshop’s six-stage
-  run, with actual cost and duration depending on the services.
-- For **your own uploads**, create a Miris account before the session if possible.
-  You can still complete the workshop with prepared specimens if processing stalls.
-- The experimental Chrome HTML-in-Canvas flag is only relevant to the optional
-  code studio. The supplied fallback is sufficient for the core journey.
+- Bring a laptop, a browser and a charger. Local development requires Node 20
+  or newer; Bolt supplies its own environment.
+- Prepared specimens require no generation account or payment. Presenters should
+  verify their configured viewer key and all six assets on the venue network.
+- If bringing your own assets, upload and process them in Miris ahead of time
+  and create a viewer key scoped to those assets. Use the prepared series if
+  processing is delayed.
+- Optional generation needs a fal.ai account, billing and `FAL_KEY` in
+  `.env.local`. The guide explains setup. Costs and processing times vary;
+  generation is not on the critical path of the two hour build.
+- HTML-in-Canvas is a required coding topic. The runtime detects the native
+  painting route and has an SVG fallback, so an experimental browser flag is
+  not required to complete the exercise.
 
-## Presenter priorities
-
-Show the actual lab immediately after the opening film. Ask for predictions
-before moving the budget controls; ask for observations before explaining the
-result. Clearly attribute generation to its model providers, asset processing
-and streaming to Miris, and the room/interface to React and three.js.
-
-Do not wait for generation before continuing. At minute 90, move everyone to
-publishing; the guide offers a finale shortcut and a reminder. Protect the final
-half hour for opening a real public link and exchanging visitor feedback.
-
-Rehearse with a mixed audience, on the venue network and representative devices.
-Record time to first visible stream, setup failures, core completion, successful
-public links, and whether participants can explain Miris’s role without prompting.
-The budget exercise is an observation activity, not a benchmark. Any comparison
-with conventional loading needs matched conditions and explicit quality differences.
+Presenter timing, recovery steps and acceptance criteria are in
+[the facilitator guide](docs/facilitator-sdk-workshop.md).
 
 ## What it is
 
@@ -77,8 +67,8 @@ React, Vite, React Three Fiber and drei. Not Next: the App Router cannot run
 in WebContainer, which is where most attendees run this.
 
 - `app/stage.tsx` is your file. It ships with `miris:` marker comments and the
-  guide writes between them when you press **Or paste it for me**. Everything
-  outside the markers is yours and is never touched.
+  guide can write recovery snippets between them. Normal exercises use your
+  editor and agent; preserve markers so lesson checks and reset keep working.
 - `app/main.tsx` mounts the stage and the guide. The guide hides in a published build, so removing it is optional.
 - `miris/` is the workshop's machinery: the guide, the curriculum, the
   snippets, the dev API that proxies fal, and a handful of scene helpers.
@@ -113,8 +103,8 @@ sentence attendees are meant to see.
 ### The prepared series
 
 `miris/fixtures.json` contains a recorded deep-sea series with six real asset IDs,
-dossiers, and its scoped viewer key. The core flow uses it immediately;
-`FALLBACK_KEYS` also exposes that key in the optional asset chooser. Verify the
+dossiers, and its scoped viewer key. The content chooser makes it available, then the key-discovery exercise
+confirms the assets before you connect streams in code. Verify the
 assets remain accessible before each session. Offline synthetic cubes remain
 separate from this real streaming demonstration.
 
@@ -133,8 +123,8 @@ machine with them in its npm cache can hide that, so test with
 version the SDK was built against; the SDK bundles its own copy too, so the
 console warns about multiple instances, which is expected.
 
-Three small components in `miris/` exist to make the SDK behave inside an
-ordinary three.js scene, and `AGENTS.md` records what each one fixes:
+Three small components in `miris/` handle the vendored SDK’s rendering
+integration, and `AGENTS.md` records what each one fixes:
 `HdrGuard` (everything that is not a splat went dark), `BudgetGuard` (the
 adaptive budget does not start itself), `GlassOrder` (glass and splats cannot
 be depth sorted against each other). If the SDK fixes these, the guards go.
@@ -156,6 +146,27 @@ time. Generation metadata and workshop reflections are excluded. Production
 builds explicitly omit the guide, independently of the static host’s content
 type headers. Keeping the guide mounted in the source is harmless.
 
+### Publishing the public starter repository
+
+`origin` is private. Publishing the starter source is a separate maintainer
+operation from deploying an attendee’s `dist` directory. Never push the private
+history directly to the public starter. Use a temporary clone and filter history
+before the force push, as documented in `AGENTS.md`:
+
+```sh
+git clone --single-branch -b <branch> . /tmp/pub
+cd /tmp/pub
+git filter-repo --force --invert-paths \
+  --path docs --path miris-web-kit --path miris/kit --path dist \
+  --path-glob '*SKILL.md' --path-glob '*voice.md'
+```
+
+Verify the filtered paths against **every commit**, including older locations
+such as `public/kit/`. Then add the public repository as a remote in that
+throwaway clone and publish the filtered branch to its `main`. Keep `vendor/`
+and both SDK tarballs in the public history. A clean tip alone does not prove
+that internal documents were removed from history.
+
 ### Known risks
 
 **Miris endpoint latency.** `app.miris.com/.well-known/jwks.json` cold-starts
@@ -168,9 +179,8 @@ six meshy jobs in parallel. If a new key serialises them, twelve minutes
 becomes thirty and the arc does not fit.
 
 **Per-attendee Miris signup, upload and processing at scale is untested.**
-It is scheduled inside the twelve minute grow, which is the only reason it
-fits. Anyone whose upload stalls can still seal their capsules: the stream
-fills in on its own once processing finishes.
+Use processed assets or the prepared series for the required build. Do not let
+a processing queue consume time reserved for coding or publishing.
 
 **Laptops on battery drop to 30fps.** Say so out loud at the start.
 

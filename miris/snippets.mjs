@@ -1,3 +1,17 @@
+const SDK = `class LaboratoryScene extends MirisScene {
+  constructor(viewerKey: string) {
+    super({ viewerKey });
+    this.name = "Sublevel 7";
+  }
+
+  specimenPosition(index: number): [number, number, number] {
+    const angle = (index / 6) * Math.PI * 2;
+    return [Math.cos(angle) * 4.2, 1.66, Math.sin(angle) * 4.2];
+  }
+}
+
+const createLabScene = (viewerKey: string) => new LaboratoryScene(viewerKey);`;
+
 const FLOOR = `      <VaultFloor floor={floor} />`;
 
 const WALKWAY = `      <VaultWalkway walk={walk} wear={wear} />`;
@@ -6,14 +20,19 @@ const CAPSULES_SNIPPET = `      {specimens.map((s, i) => <VaultCapsule key={s.id
 
 const STREAMS = `      {specimens.map((s, i) => {
         if (!s.uuid) return null;
-        const angle = (i / 6) * Math.PI * 2;
         return (
-          <FitInGlass key={\`\${s.id}:\${s.uuid}\`} position={[Math.cos(angle) * 4.2, 1.66, Math.sin(angle) * 4.2]} fill={0.7} speed={reducedMotion ? 0 : data.labDesign?.rotationSpeed ?? 0.08}>
-            <mirisStream args={[{ uuid: s.uuid, viewerKey: data.viewerKey || DEMO_KEY }]} />
+          <FitInGlass key={\`\${s.id}:\${s.uuid}\`} position={scene.specimenPosition(i)} fill={0.7} speed={reducedMotion ? 0 : data.labDesign?.rotationSpeed ?? 0.08}>
+            <mirisStream args={[{ uuid: s.uuid, viewerKey: data.viewerKey }]} />
           </FitInGlass>
         );
       })}`;
 
+
+const SINGLE_STREAM = `      {specimens[0]?.uuid && (
+        <FitInGlass position={scene.specimenPosition(0)}>
+          <mirisStream args={[{ uuid: specimens[0].uuid, viewerKey: data.viewerKey }]} />
+        </FitInGlass>
+      )}`;
 
 const HUD = `    <LabHud specimens={specimens} title={data.labDesign?.title} />`;
 
@@ -106,10 +125,12 @@ function File({ html }: { html: string }) {
   );
 }`;
 
-const CARD_PANEL = `      <Dossier specimens={specimens} />
-      <Pedestals specimens={specimens}>{(d: any) => <File html={fileMarkup(d)} />}</Pedestals>`;
+const CARD_PANEL = `      <Pedestals specimens={specimens}>{(d: any) => <File html={fileMarkup(d)} />}</Pedestals>`;
 
 export const SNIPPETS = {
+  sdk: SDK,
+  room: `${FLOOR}\n${WALKWAY}`,
+  singleStream: `${FLOOR}\n${WALKWAY}\n${CAPSULES_SNIPPET}\n${SINGLE_STREAM}`,
   floor: FLOOR,
   walkway: `${FLOOR}\n${WALKWAY}`,
   capsules: `${FLOOR}\n${WALKWAY}\n${CAPSULES_SNIPPET}`,
@@ -128,6 +149,9 @@ export const SNIPPETS = {
    walkway they already have. The Fill button writes the cumulative block; the
    card shows the part. */
 export const PARTS = {
+  sdk: SDK,
+  room: `${FLOOR}\n${WALKWAY}`,
+  singleStream: SINGLE_STREAM,
   floor: FLOOR,
   walkway: WALKWAY,
   capsules: CAPSULES_SNIPPET,
@@ -146,18 +170,22 @@ export const PARTS = {
    a marker-wide clear at 2.2 would take 2.1's deck with it. null means there is
    nothing before it and the block returns to its empty lesson state. */
 export const EMPTY_BLOCKS = {
-  scene: "",
+  sdk: "const createLabScene = (_viewerKey: string) => new Scene();",
+  scene: '      <gridHelper args={[14, 14, "#38566b", "#172c38"]} />',
   card: "",
   hud: "",
   effect: "",
   field: "  const glitch = null;",
-  markup: "  const fileMarkup = undefined;",
+  markup: '  const fileMarkup = (_d: any) => "";',
   parts: `function FitInGlass({ position, children }: any) {
   return <group position={position}>{children}</group>;
 }`,
 };
 
 export const CLEARS_TO = {
+  sdk: null,
+  room: null,
+  singleStream: "capsules",
   card: null,
   floor: null,
   walkway: "floor",
@@ -171,6 +199,9 @@ export const CLEARS_TO = {
 };
 
 export const MARKER_FOR = {
+  sdk: "sdk",
+  room: "scene",
+  singleStream: "scene",
   fit: "parts",
   file: "parts",
   markup: "markup",
@@ -183,3 +214,5 @@ export const MARKER_FOR = {
   effect: "effect",
   field: "field",
 };
+
+export const BUILD_LESSONS = ['sdk', 'room', 'capsules', 'singleStream', 'streams', 'fit', 'markup', 'file', 'card', 'field', 'effect', 'hud'];

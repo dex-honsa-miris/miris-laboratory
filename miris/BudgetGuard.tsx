@@ -1,5 +1,5 @@
 import { useFrame, useThree } from "@react-three/fiber";
-import { Miris } from "@miris-inc/three";
+import { Miris, MirisScene } from "@miris-inc/three";
 import { useEffect, useRef } from "react";
 import { getBudget, reportBudget } from "./budget";
 
@@ -48,8 +48,10 @@ export default function BudgetGuard() {
       // The core scene appears with the first stream, not before.
       const core = [...(m.scenes ?? [])].find((c: any) => c.key === scene);
       if (!core) return;
-      Object.defineProperty(scene, "coreScene", { get: () => core, configurable: true });
-      Object.defineProperty(scene, "miris", { get: () => m, configurable: true });
+      if (!(scene instanceof MirisScene)) {
+        Object.defineProperty(scene, "coreScene", { get: () => core, configurable: true });
+        Object.defineProperty(scene, "miris", { get: () => m, configurable: true });
+      }
       m._startAdaptiveBudget(scene);
       started.current = true;
     }

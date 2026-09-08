@@ -10,6 +10,8 @@ import { zipSync } from "./zip.mjs";
 import { tinyGlb } from "./tinyGlb.mjs";
 import { DEMO_UUID, STAGES, STATUSES, STAT_LABELS, IMAGE_FRAMING, IMAGE_MODEL, LABEL_LLM, LABEL_MODEL, MODEL_3D, VIEWER_KEY } from "./config";
 import { TRACKS } from "./tracks";
+import { checkBuildCode, checkBuild, checkCompleteBuild } from "./buildChecks.mjs";
+import { connectWithViewerKey } from "./viewerKeys.mjs";
 import { startWorkshop, usePrepared, chooseSource, saveWorkshop, checkWorkshop } from "./workshop.mjs";
 
 /* Dev only, by construction: configureServer has no production counterpart, so
@@ -38,7 +40,7 @@ const PROOF = {
   hud: "LabHud",
   overlay: "ScreenFx",
   field: "Fn(",
-  cardOverlay: "Dossier",
+  cardOverlay: "Pedestals",
   markup: "mw-dossier",
   fit: "getBounds",
   file: "useHtmlTexture",
@@ -420,7 +422,16 @@ async function handle(action: string, body: any, mode: string): Promise<Reply> {
     case "workshop": {
       const data = await readData(MIRIS_DIR);
       try {
+        if (body.op === "save" && body.key === "build") {
+          const problem = checkBuildCode(await readFile(STAGE, "utf8"), body.value?.lesson);
+          if (problem) return fail(problem);
+        }
+        if (body.op === "save" && ["publish", "reflection"].includes(body.key)) {
+          const problem = checkWorkshop(data, "keys") || checkCompleteBuild(await readFile(STAGE, "utf8"), data);
+          if (problem) return fail(problem);
+        }
         const patch = body.op === "start" ? startWorkshop(data, await readFixtures())
+          : body.op === "connectKey" ? connectWithViewerKey(data, body.viewerKey, body.assets, await readFixtures())
           : body.op === "prepared" ? usePrepared(data, await readFixtures())
           : body.op === "source" ? chooseSource(data, body.value, await readFixtures())
           : body.op === "save" ? saveWorkshop(data, body.key, body.value)
@@ -450,6 +461,7 @@ async function handle(action: string, body: any, mode: string): Promise<Reply> {
       const cleared = back ? SNIPPETS[back as keyof typeof SNIPPETS] : EMPTY_BLOCKS[marker as keyof typeof EMPTY_BLOCKS];
       const source = await readFile(STAGE, "utf8");
       let next = replaceMarker(source, marker, cleared);
+      if (id === "sdk") next = replaceMarker(next, "scene", EMPTY_BLOCKS.scene);
       if (["fit", "file", "markup"].includes(id)) next = replaceMarker(next, "card", EMPTY_BLOCKS.card);
       await writeFile(STAGE, next);
       return ok({ ok: true, marker, back: back ?? null });
@@ -459,8 +471,17 @@ async function handle(action: string, body: any, mode: string): Promise<Reply> {
       return ok(await writeData(MIRIS_DIR, body.patch ?? {}));
 
     case "check": {
+      if (String(body.check ?? "").startsWith("build:")) {
+        const data = await readData(MIRIS_DIR);
+        const problem = checkWorkshop(data, "keys") || checkBuild(await readFile(STAGE, "utf8"), String(body.check).slice(6), data);
+        return ok({ done: !problem, problem });
+      }
       if (String(body.check ?? "").startsWith("workshop:")) {
-        const problem = checkWorkshop(await readData(MIRIS_DIR), String(body.check).slice(9));
+        const data = await readData(MIRIS_DIR);
+        const key = String(body.check).slice(9);
+        const buildProblem = ["publish", "reflection"].includes(key)
+          ? checkWorkshop(data, "keys") || checkCompleteBuild(await readFile(STAGE, "utf8"), data) : null;
+        const problem = buildProblem || checkWorkshop(data, key);
         return ok({ done: !problem, problem });
       }
       const check = CHECKS[String(body.check ?? "")];

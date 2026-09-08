@@ -283,11 +283,11 @@ function WorkshopGuide() {
     backToProgress: () => setSelected(null),
     // Completion requires a saved public link and reflection.
     finish: async () => {
-      setBusy("6.1");
+      setBusy("6.2");
       try {
         const checked = await post({ action: "check", check: "workshop:reflection" });
         if (!checked.ok) return setNote(checked.problem!);
-        if (!checked.data.done) return setProblems(p => ({ ...p, "6.1": checked.data.problem }));
+        if (!checked.data.done) return setProblems(p => ({ ...p, "6.2": checked.data.problem }));
         const r = await post({ action: "save", patch: { finished: true } });
         if (!r.ok) return setNote(r.problem!);
         transition(() => setData((d: any) => ({ ...d, finished: true })));
@@ -366,8 +366,8 @@ function WorkshopGuide() {
 
 
         {!data.finished && <div className="mw-publish-reminder">
-          {elapsedMinutes >= 90 && <p>You’re {elapsedMinutes} minutes in. Keep the final 30 minutes for publishing and sharing.</p>}
-          <button onClick={() => { setViewing(""); void advance("5.1"); }}>Ready to publish? Go to the finale →</button>
+          {elapsedMinutes >= 100 && <p>You’re {elapsedMinutes} minutes in. Keep the final 20 minutes for publishing and sharing.</p>}
+          <button onClick={() => { setSelected("06"); setViewing("6.1"); }}>Open the publishing checklist</button>
         </div>}
         <div className="mw-split">
           <Rail

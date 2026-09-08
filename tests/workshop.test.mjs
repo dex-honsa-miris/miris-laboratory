@@ -4,7 +4,7 @@ import { startWorkshop, usePrepared, activeSeries, saveWorkshop, checkWorkshop }
 const fixtures=JSON.parse(await readFile(new URL('../miris/fixtures.json',import.meta.url),'utf8'));
 const empty={track:'',specimens:[],concept:'',zipReady:false,hatchedAt:0};
 const started={...empty,...startWorkshop(empty,fixtures,1234)};
-assert.equal(started.flowVersion,2);assert.equal(started.workshopStartedAt,1234);
+assert.equal(started.flowVersion,3);assert.equal(started.workshopStartedAt,1234);
 assert.equal(activeSeries(started).specimens.length,6);
 assert.equal(new Set(activeSeries(started).specimens.map(s=>s.uuid)).size,6);
 assert.equal(activeSeries(started).viewerKey,fixtures.viewerKey);

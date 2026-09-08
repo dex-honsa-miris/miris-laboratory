@@ -1,3 +1,4 @@
+import ViewerKeyLesson from './ViewerKeyLesson';
 import { useRef, useState } from 'react';
 import type { Sub } from './curriculum';
 import { CapsuleAuto, ConceptField, type HatchState } from './Build';
@@ -49,7 +50,7 @@ function Source({data,hatch,refresh}:Props) {
   const {run,busy,feedback}=useAction(refresh);
   return <><div className="mw-source-options">
     {[
-      ['prepared','Use the prepared series','Ready now. No generation account or payment. You can rename specimens and publish your own lab.'],
+      ['prepared','Use the prepared series','Ready now. No generation account or payment. You will connect a scoped viewer key and build the integration in code.'],
       ['generate','Generate my own creature','Optional paid route. Allow roughly 12 minutes and a workshop estimate of $12; actual cost and time can vary.'],
       ['own','Connect my own uploads','Use assets already in Miris, or upload your own source files.'],
     ].map(([id,label,description])=><button key={id} className="mw-source-option" aria-pressed={data.workshopPath===id} disabled={busy} onClick={()=>run({op:'source',value:id})}><b>{label}</b><span>{description}</span></button>)}
@@ -57,9 +58,9 @@ function Source({data,hatch,refresh}:Props) {
     {data.workshopPath==='generate' && <div className="mw-activity-box">
       <p className="mw-activity-label">Optional generation setup</p><p>Use your own fal account with billing enabled. Put your key in <code>.env.local</code>, then describe one creature below. Pressing Grow starts a paid run; choosing this route does not.</p>
       <pre>FAL_KEY=your-key-here</pre><a href={FAL_KEYS_URL} target="_blank" rel="noopener noreferrer">Open fal keys ↗</a>
-      <ConceptField hatch={hatch}/><p className="mw-activity-caption">Keep customizing while it grows. You can switch to prepared specimens at any time; an already submitted paid job continues.</p>
+      <ConceptField hatch={hatch}/><p className="mw-activity-caption">Keep coding while it grows. You can switch to prepared specimens at any time; an already submitted paid job continues.</p>
     </div>}
-    {data.workshopPath==='own' && <p className="mw-activity-caption">You’ll connect your scoped viewer key in Connect & curate. Keep using the demonstration while you prepare your uploads.</p>}
+    {data.workshopPath==='own' && <p className="mw-activity-caption">You’ll discover and connect your scoped viewer key in the next exercise. Open the reference laboratory while uploads process.</p>}
   </>;
 }
 
@@ -127,5 +128,5 @@ function Reflection({data,refresh}:Props) {
   </form></>;
 }
 
-const COMPONENTS={experiment:Observation,attribution:Attribution,source:Source,design:Design,connect:Connect,story:Story,tradeoff:Observation,publish:Publish,reflection:Reflection};
+const COMPONENTS={keys:ViewerKeyLesson,experiment:Observation,attribution:Attribution,source:Source,design:Design,connect:Connect,story:Story,tradeoff:Observation,publish:Publish,reflection:Reflection};
 export default function WorkshopActivities(props:Props){const Activity=COMPONENTS[props.sub.activity!];return Activity?<div className="mw-activity"><Activity {...props}/></div>:null;}
