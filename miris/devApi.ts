@@ -33,9 +33,9 @@ const FIXTURES = join(MIRIS_DIR, "fixtures.json");
    told the attendee they had not done a step they had just done. A check that
    blames the person for the repo's own drift is worse than no check. */
 const PROOF = {
-  floor: "<VaultFloor",
-  walkway: "<VaultWalkway",
-  capsules: "<VaultCapsule",
+  floor: "<LabFloor",
+  walkway: "<LabWalkway",
+  capsules: "<LabCapsule",
   streams: "mirisStream",
   hud: "LabHud",
   overlay: "ScreenFx",

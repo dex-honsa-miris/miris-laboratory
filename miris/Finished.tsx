@@ -50,7 +50,7 @@ export default function Finished({ data, onBack }: { data: any; onBack: () => vo
       <ul className="c14 mw-finished-list">
         <li>
           <code>app/stage.tsx</code> composes the laboratory between the <code>miris:</code> comments.
-          The prepared room and door are in <code>miris/VaultRoom.tsx</code>; repeated hardware is batched
+          The prepared room and door are in <code>miris/LabRoom.tsx</code>; repeated hardware is batched
           by <code>miris/StaticInstances.tsx</code>.
         </li>
         <li>

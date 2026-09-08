@@ -73,27 +73,27 @@ export const STEPS: Step[] = [
         num: "2.1",
         title: "Add the floor",
         body:
-          "Add VaultFloor between the miris:scene comments in app/stage.tsx. It gives you the deck, the walls, the ceiling lights and the fog.",
+          "Add LabFloor between the miris:scene comments in app/stage.tsx. It gives you the deck, the walls, the ceiling lights and the fog.",
         fill: "floor",
         check: "floor",
         explain:
-          "VaultFloor lives in miris/VaultRoom.tsx and combines a scanned metal deck, an inward-facing wall, a ceiling and fog. The repeated ribs and lights are drawn as instances, so they cost one draw call.",
+          "LabFloor lives in miris/LabRoom.tsx and combines a scanned metal deck, an inward-facing wall, a ceiling and fog. The repeated ribs and lights are drawn as instances, so they cost one draw call.",
       },
       {
         num: "2.2",
         title: "Add the walkway",
         body:
-          "Add VaultWalkway after VaultFloor. It adds the raised ring you stand on, its lit edges, and the path to the door.",
+          "Add LabWalkway after LabFloor. It adds the raised ring you stand on, its lit edges, and the path to the door.",
         fill: "walkway",
         check: "walkway",
         explain:
-          "The edge lights are thin rings and boxes with basic materials, so they stay bright without a bloom pass. The door at the end is built from bevelled shapes in miris/VaultRoom.tsx.",
+          "The edge lights are thin rings and boxes with basic materials, so they stay bright without a bloom pass. The door at the end is built from bevelled shapes in miris/LabRoom.tsx.",
       },
       {
         num: "2.3",
         title: "Add the capsules",
         body:
-          "Add the specimen map after the walkway. Each entry places one VaultCapsule around the ring; the creatures arrive in the next step.",
+          "Add the specimen map after the walkway. Each entry places one LabCapsule around the ring; the creatures arrive in the next step.",
         fill: "capsules",
         check: "capsules",
         explain:

@@ -15,7 +15,7 @@ import BudgetGuard from "../miris/BudgetGuard";
 import GlassOrder from "../miris/GlassOrder";
 import { floorMaps, walkwayTexture, wearMap } from "../miris/textures";
 import ScreenFx, { screen } from "../miris/ScreenFx";
-import { VaultFloor, VaultWalkway, VaultCapsule } from "../miris/VaultRoom";
+import { LabFloor, LabWalkway, LabCapsule } from "../miris/LabRoom";
 import { StageSkeleton } from "../miris/Skeleton";
 
 extend({ MirisStream });
@@ -157,9 +157,9 @@ export default function Stage({ initialData }: { initialData?: any } = {}) {
       <pointLight position={[0, 0.3, 0]} intensity={4} distance={9} decay={2} color={0x3bd6fe} />
 
       {/* miris:scene-start */}
-      <VaultFloor floor={floor} />
-      <VaultWalkway walk={walk} wear={wear} />
-      {specimens.map((s, i) => <VaultCapsule key={s.id} index={i} />)}
+      <LabFloor floor={floor} />
+      <LabWalkway walk={walk} wear={wear} />
+      {specimens.map((s, i) => <LabCapsule key={s.id} index={i} />)}
       {specimens.map((s, i) => {
         if (!s.uuid) return null;
         const angle = (i / 6) * Math.PI * 2;

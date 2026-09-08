@@ -38,8 +38,8 @@ test('adding File preserves the fitting code attendees already customized', () =
 test('clearing dependencies removes their pedestal consumer', () => {
   const complete = completedStage(starter, curriculum);
   for (const id of ['fit', 'file', 'markup']) assert.equal(readMarker(clearLesson(complete, id), 'card').trim(), '');
-  assert.match(readMarker(clearLesson(complete, 'walkway'), 'scene'), /VaultFloor/);
-  assert.doesNotMatch(readMarker(clearLesson(complete, 'walkway'), 'scene'), /VaultWalkway/);
+  assert.match(readMarker(clearLesson(complete, 'walkway'), 'scene'), /LabFloor/);
+  assert.doesNotMatch(readMarker(clearLesson(complete, 'walkway'), 'scene'), /LabWalkway/);
 });
 
 test('completed reference is generated from this starter and these curriculum steps', async () => {

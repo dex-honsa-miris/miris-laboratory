@@ -2,7 +2,7 @@ import { RoundedBox } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { Component, memo, type ReactNode, useRef, useSyncExternalStore } from "react";
 import { Object3D, Vector3, type Texture } from "three";
-import { VaultLabel } from "./VaultRoom";
+import { LabLabel } from "./LabRoom";
 import { getSelected, getSelectedPart, subscribeLab } from "./labState";
 import { getScreenOutput, setScreenSource } from "./ScreenFx";
 
@@ -111,7 +111,7 @@ const Pedestal = memo(function Pedestal({ i, specimen, specimens, active, childr
       <mesh position={[0, 0.07, 0]}><boxGeometry args={[1.05, 0.14, 0.66]} /><meshStandardMaterial color="#253b49" metalness={0.65} roughness={0.5} /></mesh>
       <mesh position={[0, 0.55, -0.08]}><boxGeometry args={[0.6, 0.5, 0.32]} /><meshStandardMaterial color="#445e6b" metalness={0.5} roughness={0.5} /></mesh>
       {[0, 1, 2, 3, 4].map(n => <mesh key={n} position={[0, 0.22 + n * 0.045, BODY.d / 2 + 0.004]}><boxGeometry args={[0.55, 0.015, 0.012]} /><meshStandardMaterial color="#172c38" /></mesh>)}
-      <group position={[0, 0.48, BODY.d / 2 + 0.008]}><VaultLabel text={"BIO / " + String(i + 1).padStart(2, "0")} width={0.46} height={0.075} /></group>
+      <group position={[0, 0.48, BODY.d / 2 + 0.008]}><LabLabel text={"BIO / " + String(i + 1).padStart(2, "0")} width={0.46} height={0.075} /></group>
       <group position={[0, HEAD_Y, 0.05]} rotation={[TILT, 0, 0]}>
         <RoundedBox args={[SCREEN.w + 0.22, 0.18, SCREEN.h + 0.25]} radius={0.045} smoothness={3}>
           <meshStandardMaterial color={0x83969a} roughness={0.5} metalness={0.5} />

@@ -15,7 +15,7 @@ import BudgetGuard from "../miris/BudgetGuard";
 import GlassOrder from "../miris/GlassOrder";
 import { floorMaps, walkwayTexture, wearMap } from "../miris/textures";
 import ScreenFx, { screen } from "../miris/ScreenFx";
-import { VaultFloor, VaultWalkway, VaultCapsule } from "../miris/VaultRoom";
+import { LabFloor, LabWalkway, LabCapsule } from "../miris/LabRoom";
 import { StageSkeleton } from "../miris/Skeleton";
 
 extend({ MirisStream });

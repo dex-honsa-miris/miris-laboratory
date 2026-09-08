@@ -1,8 +1,8 @@
-const FLOOR = `      <VaultFloor floor={floor} />`;
+const FLOOR = `      <LabFloor floor={floor} />`;
 
-const WALKWAY = `      <VaultWalkway walk={walk} wear={wear} />`;
+const WALKWAY = `      <LabWalkway walk={walk} wear={wear} />`;
 
-const CAPSULES_SNIPPET = `      {specimens.map((s, i) => <VaultCapsule key={s.id} index={i} />)}`;
+const CAPSULES_SNIPPET = `      {specimens.map((s, i) => <LabCapsule key={s.id} index={i} />)}`;
 
 const STREAMS = `      {specimens.map((s, i) => {
         if (!s.uuid) return null;
