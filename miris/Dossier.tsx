@@ -15,16 +15,22 @@ export default function Dossier({ specimens = [] as any[] }) {
        walked off to it. Anything that moved more than a few pixels between
        down and up is the orbit, not a choice. */
     let downAt: [number, number] | null = null;
-    const onDown = (e: MouseEvent) => {
+    let dragged = false;
+    const onDown = (e: PointerEvent) => {
       downAt = [e.clientX, e.clientY];
+      dragged = !e.isPrimary;
     };
+    const onMove = (e: PointerEvent) => {
+      if (downAt && Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 6) dragged = true;
+    };
+    const onCancel = () => { dragged = true; };
     const onClick = (e: MouseEvent) => {
-      if (downAt && Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 6) return;
+      if (dragged || (downAt && Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 6)) return;
       // Anything with its own controls, the guide included, keeps its click.
       // .mw-dossier-panel, not .mw-dossier: the shorter class does not exist,
       // so every click inside the open file fell through to the hit test and
       // the close button selected whichever capsule sat behind it.
-      if ((e.target as HTMLElement)?.closest?.(".mw-panel, .mw-dossier-panel, .mw-tab, .mw-tray, .mw-tray-min, .mw-dev")) return;
+      if (!(e.target instanceof HTMLCanvasElement)) return;
       // The pedestal stands in front of its tube, so it is tested first.
       let best = -1;
       let part: Part = "pedestal";
@@ -45,13 +51,17 @@ export default function Dossier({ specimens = [] as any[] }) {
       setSelected(best, part);
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSelected(-1);
+      if (e.key === "Escape" && !document.querySelector("dialog[open]")) setSelected(-1);
     };
-    window.addEventListener("mousedown", onDown);
+    window.addEventListener("pointerdown", onDown);
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointercancel", onCancel);
     window.addEventListener("click", onClick);
     window.addEventListener("keydown", onKey);
     return () => {
-      window.removeEventListener("mousedown", onDown);
+      window.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointercancel", onCancel);
       window.removeEventListener("click", onClick);
       window.removeEventListener("keydown", onKey);
     };

@@ -159,7 +159,7 @@ export function CapsuleProbe() {
 /** The laboratory's readout. Lives OUTSIDE the canvas: a fixed element inside
  *  drei's fullscreen layer anchors to that layer's transform and ends up
  *  floating in the scene rather than pinned to the window. */
-export default function LabHud({ specimens = [] as any[] }) {
+export default function LabHud({ specimens = [] as any[], title = "Sublevel 7" }) {
   useSyncExternalStore(subscribeLab, labVersion, labVersion);
   useSyncExternalStore(subscribeBudget, budgetVersion, budgetVersion);
   const boxes = getBoxes();
@@ -205,12 +205,12 @@ export default function LabHud({ specimens = [] as any[] }) {
   const stage = hover >= 0 ? specimens[hover]?.stage : null;
 
   return (
-    <div className="mw-hud" aria-hidden="true">
+    <div className="mw-hud">
       <div className="mw-hud-tl">
-        <b>Vivarium · Sublevel 7</b>
+        <b>Vivarium · {title}</b>
         <span>Directorate of Applied Genetics</span>
       </div>
-      <div className="mw-hud-bl">{hover < 0 ? "Containment capsule" : onPedestal ? "Click to read the file" : "Click to approach"}</div>
+      <div className="mw-hud-bl" aria-hidden="true">{hover < 0 ? "Containment capsule" : onPedestal ? "Click to read the file" : "Click to approach"}</div>
       <div className="mw-hud-br">
         {live} {live === 1 ? "specimen" : "specimens"} · Containment active
       </div>

@@ -66,7 +66,7 @@ function LaboratoryReel() {
         </div>
         <div className="mw-reel-progress" aria-hidden="true"><i style={{ width: `${Math.min(100, seconds / 24 * 100)}%` }} /></div>
       </div>
-      <figcaption id="mw-reel-caption"><span>This is what you’ll build.</span><span>Captured in the workshop · 24-second film</span></figcaption>
+      <figcaption id="mw-reel-caption"><span>The world you’ll make your own.</span><span>Captured in the workshop · 24-second film</span></figcaption>
     </figure>
   );
 }
@@ -91,11 +91,11 @@ export default function Start({ onChoose, note }: { onChoose: (id: string) => vo
         <section className="mw-welcome-intro" aria-labelledby="mw-welcome-title">
           <p className="mw-welcome-location">Welcome to Sublevel 7</p>
           <h1 id="mw-welcome-title">Build a living laboratory.</h1>
-          <p className="mw-welcome-description">Imagine a creature. Watch it grow through six life stages. Give it a world anyone can step into.</p>
+          <p className="mw-welcome-description">Step inside a streaming world. Make it yours, then share it. Start with prepared specimens or create a creature of your own.</p>
           <button type="button" className="mw-welcome-enter" onClick={enter} disabled={entering}>
             {entering ? "Opening the laboratory…" : "Enter the laboratory"}<span aria-hidden="true">↗</span>
           </button>
-          <p className="mw-welcome-detail">Your idea. Your specimens. Your corner of the web.</p>
+          <p className="mw-welcome-detail">Prepared specimens included. Code and generation are optional.</p>
           {(error || note) && <p className="mw-welcome-note" role="status">{error || note}</p>}
         </section>
         <LaboratoryReel />

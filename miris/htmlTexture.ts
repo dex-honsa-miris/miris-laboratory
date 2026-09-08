@@ -61,6 +61,7 @@ export default function useHtmlTexture(html: string | false | null | undefined):
       host.style.cssText = offscreen;
       target = document.createElement("canvas");
     }
+    host.setAttribute("aria-hidden", "true");
     host.innerHTML = html;
     document.body.appendChild(host);
 

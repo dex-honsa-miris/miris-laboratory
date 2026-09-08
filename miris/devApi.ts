@@ -10,6 +10,7 @@ import { zipSync } from "./zip.mjs";
 import { tinyGlb } from "./tinyGlb.mjs";
 import { DEMO_UUID, STAGES, STATUSES, STAT_LABELS, IMAGE_FRAMING, IMAGE_MODEL, LABEL_LLM, LABEL_MODEL, MODEL_3D, VIEWER_KEY } from "./config";
 import { TRACKS } from "./tracks";
+import { startWorkshop, usePrepared, chooseSource, saveWorkshop, checkWorkshop } from "./workshop.mjs";
 
 /* Dev only, by construction: configureServer has no production counterpart, so
  * a built app has no endpoint to reach. */
@@ -416,6 +417,20 @@ async function handle(action: string, body: any, mode: string): Promise<Reply> {
   }
 
   switch (action) {
+    case "workshop": {
+      const data = await readData(MIRIS_DIR);
+      try {
+        const patch = body.op === "start" ? startWorkshop(data, await readFixtures())
+          : body.op === "prepared" ? usePrepared(data, await readFixtures())
+          : body.op === "source" ? chooseSource(data, body.value, await readFixtures())
+          : body.op === "save" ? saveWorkshop(data, body.key, body.value)
+          : null;
+        if (!patch) return fail("Unknown workshop action.");
+        await writeData(MIRIS_DIR, patch);
+        return ok({ ok: true });
+      } catch (error) { return fail((error as Error).message); }
+    }
+
     case "fill": {
       const snippet = SNIPPETS[body.snippetId as keyof typeof SNIPPETS];
       const marker = MARKER_FOR[body.snippetId as keyof typeof MARKER_FOR];
@@ -444,6 +459,10 @@ async function handle(action: string, body: any, mode: string): Promise<Reply> {
       return ok(await writeData(MIRIS_DIR, body.patch ?? {}));
 
     case "check": {
+      if (String(body.check ?? "").startsWith("workshop:")) {
+        const problem = checkWorkshop(await readData(MIRIS_DIR), String(body.check).slice(9));
+        return ok({ done: !problem, problem });
+      }
       const check = CHECKS[String(body.check ?? "")];
       // No check for this step is not a failure: it means nothing on disk
       // proves it, so the attendee's word is what we have.
@@ -461,7 +480,7 @@ async function handle(action: string, body: any, mode: string): Promise<Reply> {
       if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(uuid))
         return fail(`That uuid does not look like one: "${uuid}". Copy just the id from the asset page.`);
       bank[i] = { ...bank[i], uuid, status: "live" };
-      const patch: Record<string, unknown> = { specimens: bank };
+      const patch: Record<string, unknown> = { specimens: bank, previewSeries: null };
       // One key reads every capsule, so it lives beside the bank, not inside it.
       const key = String(body?.viewerKey ?? "").trim();
       if (key) patch.viewerKey = key;
@@ -742,6 +761,7 @@ async function handle(action: string, body: any, mode: string): Promise<Reply> {
         concept: stored.concept || fx?.concept || "",
         specimens: bank,
         viewerKey: key,
+        previewSeries: null,
         zipReady: true,
         hatchedAt: Date.now(),
       });

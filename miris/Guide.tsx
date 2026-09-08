@@ -4,12 +4,15 @@ import { STEPS, type Sub } from "./curriculum";
 import { transition } from "./transition";
 import { nextSub, stepOfSub } from "./progress";
 import Rail from "./Rail";
-import StepPane, { type StepActions } from "./Step";
+import type { StepActions } from "./Step";
+import StepPane from "./WorkshopPane";
+import { FLOW_VERSION } from "./workshop.mjs";
 import { trackById } from "./tracks";
 import Start from "./Start";
 import { PanelSkeleton } from "./Skeleton";
 import Finished from "./Finished";
 import "./guide.css";
+import "./workshop.css";
 
 /* The workshop API is Vite dev middleware, so a build has no counterpart for it.
  * The tell is not the status code: a built app answers /api/miris with its SPA
@@ -43,6 +46,10 @@ async function readApi(res: Response): Promise<ApiResult> {
 
 
 export default function MirisGuide() {
+  return import.meta.env.PROD ? null : <WorkshopGuide />;
+}
+
+function WorkshopGuide() {
   const [open, setOpen] = useState(true);
   const [absent, setAbsent] = useState(false);
 
@@ -177,14 +184,10 @@ export default function MirisGuide() {
     // panel and the panel does not exist yet.
     setNote(id ? "Setting up your track" : "Going back to the chooser");
 
-    // Changing track clears the previous one's prompt, render and mesh, so a
-    // subject never carries over into a track that did not describe it.
-    const patch: Record<string, unknown> =
-      id && id !== data.track
-        ? { track: id, prompt: "", imageUrl: "", falRequestId: "", modelStartedAt: 0, glb: "", card: null }
-        : { track: id };
-    const saved = await post({ action: "save", patch });
+    const saved = id ? await post({ action: "workshop", op: "start" }) : await post({ action: "save", patch: { track: "" } });
     if (!saved.ok) return setNote(saved.problem!);
+    window.dispatchEvent(new Event("miris:refresh"));
+    await hatch.refresh();
 
     let next: any;
     try {
@@ -276,15 +279,21 @@ export default function MirisGuide() {
       setViewing("");
       await advance(subNum);
     },
-    reload: () => { void load(); },
+    reload: async () => { await load(); await hatch.refresh(); },
     backToProgress: () => setSelected(null),
-    // The last substep has nothing to verify on disk, so Finish just records
-    // that it was pressed. The flag lives in data.json so a reload keeps the
-    // closing pane, and Back to the steps clears it.
+    // Completion requires a saved public link and reflection.
     finish: async () => {
-      const r = await post({ action: "save", patch: { finished: true } });
-      if (!r.ok) return setNote(r.problem!);
-      transition(() => setData((d: any) => ({ ...d, finished: true })));
+      setBusy("6.1");
+      try {
+        const checked = await post({ action: "check", check: "workshop:reflection" });
+        if (!checked.ok) return setNote(checked.problem!);
+        if (!checked.data.done) return setProblems(p => ({ ...p, "6.1": checked.data.problem }));
+        const r = await post({ action: "save", patch: { finished: true } });
+        if (!r.ok) return setNote(r.problem!);
+        transition(() => setData((d: any) => ({ ...d, finished: true })));
+      } catch (error) { setNote(`Could not finish: ${(error as Error).message}`); }
+      finally { setBusy(""); }
+
     },
   };
 
@@ -294,9 +303,15 @@ export default function MirisGuide() {
     transition(() => setData((d: any) => ({ ...d, finished: false })));
   };
 
+  const [elapsedMinutes, setElapsedMinutes] = useState(0);
+  useEffect(() => {
+    const update = () => setElapsedMinutes(data.workshopStartedAt ? Math.max(0, Math.floor((Date.now() - data.workshopStartedAt) / 60000)) : 0);
+    update(); const timer = setInterval(update, 30000); return () => clearInterval(timer);
+  }, [data.workshopStartedAt]);
+
   if (absent) return null;
   if (!loaded) return <PanelSkeleton />;
-  if (!data.track)
+  if (!data.track || data.flowVersion !== FLOW_VERSION)
     return (
       <>
         <DevBar hatch={hatch} />
@@ -318,13 +333,13 @@ export default function MirisGuide() {
   return (
     <>
       <DevBar hatch={hatch} />
-      <HatchTray hatch={hatch} />
+      {data.workshopPath === "generate" && <HatchTray hatch={hatch} />}
       <aside className="mw-panel" style={trackVars}>
         <header className="mw-head">
           <b className="b14">Spatial streaming</b>
           <img className="mw-mark" src="/kit/assets/miris-logo-white.svg" alt="Miris" />
           <button className="mw-hide" onClick={() => setOpen(false)} aria-label="Hide the guide">
-            ×
+            <span className="mw-explore-label">Explore scene</span><span aria-hidden="true">×</span>
           </button>
         </header>
 
@@ -339,7 +354,6 @@ export default function MirisGuide() {
             alt=""
             aria-hidden="true"
             style={{ ["--focal-strip" as string]: track.focalStrip } as React.CSSProperties}
-            /* Dropped by WebContainer in bolt; the strip keeps its own ground. */
             onError={(e) => {
               e.currentTarget.style.display = "none";
             }}
@@ -351,6 +365,10 @@ export default function MirisGuide() {
         </div>
 
 
+        {!data.finished && <div className="mw-publish-reminder">
+          {elapsedMinutes >= 90 && <p>You’re {elapsedMinutes} minutes in. Keep the final 30 minutes for publishing and sharing.</p>}
+          <button onClick={() => { setViewing(""); void advance("5.1"); }}>Ready to publish? Go to the finale →</button>
+        </div>}
         <div className="mw-split">
           <Rail
             progressStepNum={progressStep.num}

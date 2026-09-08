@@ -1,3 +1,4 @@
+import prepared from "./fixtures.json";
 export const VIEWER_KEY = "4YIGMPUj5-fL8n0jkp1kQpJktss_UaBDMW9jwJb08f4";
 export const DEMO_UUID = "2b21e89f-ef5d-4175-bbdf-03e8649bcb76";
 
@@ -24,7 +25,9 @@ export const PORTAL_URL = "https://app.miris.com";
    account is blocked or whose run failed is streaming in a minute. Public by
    design: a viewer key ships in every published lab anyway. Empty hides the
    buttons. */
-export const FALLBACK_KEYS: { label: string; key: string }[] = [];
+export const FALLBACK_KEYS: { label: string; key: string }[] = [
+  { label: "Deep-sea life cycle", key: prepared.viewerKey },
+];
 export const FAL_KEYS_URL = "https://fal.ai/dashboard/keys";
 
 // Authorises every stream. Cold start is 6 to 9s; warming it early does not help.

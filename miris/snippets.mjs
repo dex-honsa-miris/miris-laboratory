@@ -8,16 +8,16 @@ const STREAMS = `      {specimens.map((s, i) => {
         if (!s.uuid) return null;
         const angle = (i / 6) * Math.PI * 2;
         return (
-          <FitInGlass key={s.id} position={[Math.cos(angle) * 4.2, 1.66, Math.sin(angle) * 4.2]} fill={0.7}>
+          <FitInGlass key={\`\${s.id}:\${s.uuid}\`} position={[Math.cos(angle) * 4.2, 1.66, Math.sin(angle) * 4.2]} fill={0.7} speed={reducedMotion ? 0 : data.labDesign?.rotationSpeed ?? 0.08}>
             <mirisStream args={[{ uuid: s.uuid, viewerKey: data.viewerKey || DEMO_KEY }]} />
           </FitInGlass>
         );
       })}`;
 
 
-const HUD = `    <LabHud specimens={specimens} />`;
+const HUD = `    <LabHud specimens={specimens} title={data.labDesign?.title} />`;
 
-const EFFECT = `    <ScreenFx node={glitch} />`;
+const EFFECT = `    <ScreenFx node={reducedMotion ? null : glitch} />`;
 
 const FIELD = `  const glitch = useMemo(() => Fn(() => {
     const p = uv();
@@ -42,7 +42,7 @@ const MARKUP = `  // The file is HTML. The browser lays it out with the guide's 
       <header class="mw-d-terminal">MIRIS BIOLOGY DIVISION <span>M-06 / RECORD ACCESS</span></header>
       <div>
         <p class="mw-d-code">\${d.designation} / \${d.series}</p>
-        <h3>\${d.name}</h3>
+        <h3>\${escapeMarkup(d.name)}</h3>
         <p class="mw-d-class">\${d.classification}</p>
         <ol class="mw-d-series">
           \${d.stages.map((name: string, k: number) => \`
@@ -56,12 +56,12 @@ const MARKUP = `  // The file is HTML. The browser lays it out with the guide's 
       </div>
       <div>
         <p class="mw-d-head">Field observations</p>
-        <p class="mw-d-notes">\${d.notes}</p>
+        <p class="mw-d-notes">\${escapeMarkup(d.notes)}</p>
       </div>
       <footer class="mw-d-terminal">BIOLOGICAL RECORD / READ ONLY <span>TERMINAL \${String(d.index + 1).padStart(2, "0")} / 06</span></footer>
     </div>\`;`;
 
-const FIT = `function FitInGlass({ position, fill = 0.7, children }: any) {
+const FIT = `function FitInGlass({ position, fill = 0.7, speed = 0.08, children }: any) {
   const turntable = useRef<Group>(null);
   const box = useRef<Group>(null);
   const settled = useRef(false);
@@ -69,7 +69,7 @@ const FIT = `function FitInGlass({ position, fill = 0.7, children }: any) {
     const g = box.current;
     if (!g || !turntable.current) return;
     if (settled.current) {
-      turntable.current.rotation.y = (turntable.current.rotation.y + Math.min(dt, 0.1) * 0.08) % (Math.PI * 2);
+      turntable.current.rotation.y = (turntable.current.rotation.y + Math.min(dt, 0.1) * speed) % (Math.PI * 2);
       return;
     }
     let stream: any = null;

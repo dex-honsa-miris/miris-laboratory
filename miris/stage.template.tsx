@@ -17,11 +17,14 @@ import { floorMaps, walkwayTexture, wearMap } from "../miris/textures";
 import ScreenFx, { screen } from "../miris/ScreenFx";
 import { VaultFloor, VaultWalkway, VaultCapsule } from "../miris/VaultRoom";
 import { StageSkeleton } from "../miris/Skeleton";
+import SceneControls from "../miris/SceneControls";
+import useScenePreferences from "../miris/useScenePreferences";
+import { activeSeries, escapeMarkup } from "../miris/workshop.mjs";
 
 extend({ MirisStream });
 
 // miris:parts-start
-function FitInGlass({ position, fill = 0.7, children }: any) {
+function FitInGlass({ position, fill = 0.7, speed = 0.08, children }: any) {
   const turntable = useRef<Group>(null);
   const box = useRef<Group>(null);
   const settled = useRef(false);
@@ -29,7 +32,7 @@ function FitInGlass({ position, fill = 0.7, children }: any) {
     const g = box.current;
     if (!g || !turntable.current) return;
     if (settled.current) {
-      turntable.current.rotation.y = (turntable.current.rotation.y + Math.min(dt, 0.1) * 0.08) % (Math.PI * 2);
+      turntable.current.rotation.y = (turntable.current.rotation.y + Math.min(dt, 0.1) * speed) % (Math.PI * 2);
       return;
     }
     let stream: any = null;
@@ -68,12 +71,16 @@ function File({ html }: { html: string }) {
 // Your file. Each step's code goes between the miris: comments below.
 export default function Stage() {
   const [data, setData] = useState<any>(null);
+  const { compact, reducedMotion } = useScenePreferences();
 
   useEffect(() => {
-    fetch("/api/miris")
-      .then((r) => r.json())
-      .then(setData)
-      .catch(() => setData({}));
+    let alive = true;
+    const load = () => fetch(import.meta.env.PROD ? "/miris-scene.json" : "/api/miris").then(r => r.json()).then(value => {
+      if (alive) setData({ ...value, ...activeSeries(value) });
+    }).catch(() => { if (alive) setData({}); });
+    void load();
+    window.addEventListener("miris:refresh", load);
+    return () => { alive = false; window.removeEventListener("miris:refresh", load); };
   }, []);
 
 
@@ -83,7 +90,7 @@ export default function Stage() {
       <header class="mw-d-terminal">MIRIS BIOLOGY DIVISION <span>M-06 / RECORD ACCESS</span></header>
       <div>
         <p class="mw-d-code">${d.designation} / ${d.series}</p>
-        <h3>${d.name}</h3>
+        <h3>${escapeMarkup(d.name)}</h3>
         <p class="mw-d-class">${d.classification}</p>
         <ol class="mw-d-series">
           ${d.stages.map((name: string, k: number) => `
@@ -97,7 +104,7 @@ export default function Stage() {
       </div>
       <div>
         <p class="mw-d-head">Field observations</p>
-        <p class="mw-d-notes">${d.notes}</p>
+        <p class="mw-d-notes">${escapeMarkup(d.notes)}</p>
       </div>
       <footer class="mw-d-terminal">BIOLOGICAL RECORD / READ ONLY <span>TERMINAL ${String(d.index + 1).padStart(2, "0")} / 06</span></footer>
     </div>`;
@@ -137,15 +144,15 @@ export default function Stage() {
   return (
     <>
     <Canvas
-      dpr={[1, 1.5]}
+      dpr={compact ? 1 : [1, 1.5]}
       gl={{
         alpha: true,
         antialias: true,
         powerPreference: "high-performance",
         toneMapping: NoToneMapping,
       }}
-      camera={{ position: [0, 1.7, 0.02], fov: 55 }}
-      style={{ position: "fixed", top: 0, left: 0, width: "calc(100vw - var(--mw-side, 0px))", height: "100vh" }}
+      camera={{ position: [0, 1.7, 0.02], fov: data.labDesign?.fov ?? 55 }}
+      style={{ position: "fixed", top: 0, left: 0, width: "calc(100vw - var(--mw-side, 0px))", height: "100dvh", touchAction: "none" }}
     >
       <hemisphereLight args={[0xb7d8f0, 0x26323b, 1.2]} />
       <directionalLight position={[-6, 9, 4]} intensity={2.1} color={0xbfe0f2} />
@@ -159,7 +166,7 @@ export default function Stage() {
         if (!s.uuid) return null;
         const angle = (i / 6) * Math.PI * 2;
         return (
-          <FitInGlass key={s.id} position={[Math.cos(angle) * 4.2, 1.66, Math.sin(angle) * 4.2]} fill={0.7}>
+          <FitInGlass key={`${s.id}:${s.uuid}`} position={[Math.cos(angle) * 4.2, 1.66, Math.sin(angle) * 4.2]} fill={0.7} speed={reducedMotion ? 0 : data.labDesign?.rotationSpeed ?? 0.08}>
             <mirisStream args={[{ uuid: s.uuid, viewerKey: data.viewerKey || DEMO_KEY }]} />
           </FitInGlass>
         );
@@ -187,11 +194,13 @@ export default function Stage() {
     </Canvas>
 
     {/* miris:hud-start */}
-    <LabHud specimens={specimens} />
+    <LabHud specimens={specimens} title={data.labDesign?.title} />
     {/* miris:hud-end */}
 
+    <SceneControls specimens={specimens} />
+
     {/* miris:effect-start */}
-    <ScreenFx node={glitch} />
+    <ScreenFx node={reducedMotion ? null : glitch} />
     {/* miris:effect-end */}
     </>
   );

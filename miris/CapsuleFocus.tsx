@@ -2,6 +2,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useRef } from "react";
 import { Vector3 } from "three";
 import { getSelected, getSelectedPart } from "./labState";
+import useScenePreferences from "./useScenePreferences";
 import { screenFrame } from "./Pedestals";
 
 const RING = 4.2;
@@ -38,6 +39,7 @@ const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 
  *  the room when it closes. Mounted inside the Canvas; renders nothing. */
 export default function CapsuleFocus() {
   const { camera, controls } = useThree() as any;
+  const { reducedMotion } = useScenePreferences();
   const last = useRef<string | null>(null);
   const t = useRef(1);
 
@@ -91,7 +93,7 @@ export default function CapsuleFocus() {
     }
 
     if (t.current >= 1) return; // Arrived: hand the camera back to the user.
-    t.current = Math.min(1, t.current + dt / TRAVEL);
+    t.current = Math.min(1, t.current + (reducedMotion ? 1 : dt / TRAVEL));
     const k = ease(t.current);
     camera.position.lerpVectors(fromPos, toPos, k);
     if (controls?.target) {

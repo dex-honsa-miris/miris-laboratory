@@ -1,83 +1,24 @@
-import { STEPS } from "./curriculum";
+import { activeSeries } from './workshop.mjs';
+import { PublishedLink } from './WorkshopControls';
+import { PORTAL_URL } from './config';
 
-/** The closing pane, shown in place of the steps once Finish is pressed on the
- *  last one. What was built, what is worth trying next, and the way back. */
-export default function Finished({ data, onBack }: { data: any; onBack: () => void }) {
-  const specimens: any[] = data?.specimens ?? [];
-  const live = specimens.filter((s) => s?.uuid).length;
-  const stages = specimens.map((s) => s?.stage).filter(Boolean);
-  const concept: string = data?.concept || "";
-
-  return (
-    <div className="mw-pane mw-finished">
-      <p className="l12">Sublevel 7</p>
-      <h2 className="t20 mw-pane-title">Containment holds.</h2>
-
-      <p className="c14">
-        {concept ? <>You described <em>{concept}</em>. </> : null}
-        {live} {live === 1 ? "specimen is" : "specimens are"} streaming
-        {stages.length === 6 ? <>, {stages[0]} to {stages[5]},</> : null} into a room you built in three.js, with a
-        file painted from live HTML beside each one and a blue CRT treatment on the selected screen. Anyone with your link
-        loads the same six streams at whatever detail their screen and connection justify.
-      </p>
-
-      <h3 className="c14 mw-finished-h">Worth trying while the room is still open</h3>
-      <ul className="c14 mw-finished-list">
-        <li>
-          Drag the budget slider in the readout to 40k and watch which capsules coarsen first. That order is
-          the adaptive budget spending where the camera is looking.
-        </li>
-        <li>
-          Rewrite the header in <code>fileMarkup</code>, then click a pedestal. Its screen repaints from your
-          markup; keep additions inside the 640 by 400 pixel layout.
-        </li>
-        <li>
-          In the field, lower <code>0.83</code> in the <code>live</code> line to <code>0.5</code> for more
-          frequent tears, or change the blue phosphor tint in <code>vec3(0.48, 0.78, 1)</code>.
-        </li>
-        <li>
-          Change the rotation speed in <code>FitInGlass</code> from <code>0.08</code> to <code>0.04</code>
-          radians per second. Each centered specimen now takes about 157 seconds to turn.
-        </li>
-        <li>
-          If you want the guide gone from the published lab, comment out <code>&lt;MirisGuide /&gt;</code> in{" "}
-          <code>app/main.tsx</code> and publish again. Leaving it in costs nothing: without the workshop API it
-          renders nothing.
-        </li>
-      </ul>
-
-      <h3 className="c14 mw-finished-h">Where the pieces are</h3>
-      <ul className="c14 mw-finished-list">
-        <li>
-          <code>app/stage.tsx</code> composes the laboratory between the <code>miris:</code> comments.
-          The prepared room and door are in <code>miris/VaultRoom.tsx</code>; repeated hardware is batched
-          by <code>miris/StaticInstances.tsx</code>.
-        </li>
-        <li>
-          The Miris SDK: <a href="https://www.npmjs.com/package/@miris-inc/three" target="_blank" rel="noopener noreferrer">@miris-inc/three</a>.
-          A stream is <code>&lt;mirisStream args=&#123;[&#123; uuid, viewerKey &#125;]&#125; /&gt;</code> and
-          nothing else.
-        </li>
-        <li>
-          HTML-in-Canvas: the{" "}
-          <a href="https://github.com/WICG/html-in-canvas" target="_blank" rel="noopener noreferrer">WICG explainer</a>.
-          The fallback in <code>miris/htmlInCanvas.ts</code> is what every browser without the flag ran.
-        </li>
-        <li>
-          TSL: the{" "}
-          <a href="https://github.com/mrdoob/three.js/wiki/Three.js-Shading-Language" target="_blank" rel="noopener noreferrer">three.js shading language wiki</a>.
-          The graph in <code>app/stage.tsx</code> runs through <code>miris/ScreenFx.tsx</code> on an unseen canvas.
-          It updates only the selected terminal, at up to 30 frames per second, and pauses when hidden.
-        </li>
-      </ul>
-
-      <p className="c14 mw-finished-thanks">
-        Thank you for building it. {STEPS.length} chapters, one creature, six capsules.
-      </p>
-
-      <button className="btn btn-ghost btn-sm mw-next" onClick={onBack}>
-        Back to the steps
-      </button>
-    </div>
-  );
+export default function Finished({data,onBack}:{data:any;onBack:()=>void}) {
+  const display=activeSeries(data),answers=data.workshopAnswers||{},reflection=answers.reflection||{};
+  const count=display.specimens?.filter(s=>s.uuid).length||0;
+  return <div className="mw-pane mw-finished">
+    <p className="mw-workshop-time">Your workshop takeaway</p><h2 className="t20 mw-pane-title">A world you can share.</h2>
+    <p className="c14">{data.labDesign?.title||'Your laboratory'} connects {count} specimen capsules through Miris. {display.origin==='prepared'?'You used the prepared series as your content source.':'You connected your specimen assets to the supplied room.'} The scene, presentation and streaming each play a different part.</p>
+    <PublishedLink url={data.publishedUrl}/>
+    <h3 className="mw-finished-h">What you discovered</h3>
+    <ul className="c14 mw-finished-list"><li><b>Miris:</b> processes and streams the assets into your experience.</li><li><b>Your scene:</b> uses familiar web and three.js components for cameras, transforms and interaction.</li><li><b>Your design:</b> gives that content context and a reason to explore.</li></ul>
+    {answers.tradeoff&&<div className="mw-activity-box"><b>Your streaming observation</b><p>{answers.tradeoff}</p></div>}
+    {reflection.peer&&<div className="mw-activity-box"><b>A visitor’s perspective</b><p>{reflection.peer}</p></div>}
+    {reflection.miris&&<div className="mw-activity-box"><b>Miris, in your words</b><p>{reflection.miris}</p></div>}
+    {reflection.next&&<div className="mw-activity-box"><b>Your next project</b><p>{reflection.next}</p></div>}
+    <h3 className="mw-finished-h">Turn that idea into a small next step</h3>
+    <p className="c14">Choose one asset and one thing a visitor should do with it. Upload it to Miris, scope a viewer key, and replace a specimen in this starter. Keep the first experiment small enough to share.</p>
+    <p className="c14"><a href={PORTAL_URL} target="_blank" rel="noopener noreferrer">Open Miris ↗</a> · <a href="https://www.npmjs.com/package/@miris-inc/three" target="_blank" rel="noopener noreferrer">Explore the SDK ↗</a></p>
+    <p className="mw-activity-caption">Your reflection stays in the development project. The published snapshot includes only the displayed specimens and scene design.</p>
+    <button className="btn btn-secondary btn-sm" onClick={onBack}>Back to the workshop</button>
+  </div>;
 }

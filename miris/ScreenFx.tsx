@@ -51,7 +51,8 @@ export default function ScreenFx({ node }: { node: any }) {
       await r.init();
       if (!live) return void r.dispose();
       r.setPixelRatio(1);
-      r.setSize(W, H, false);
+      const compact = matchMedia("(max-width: 720px), (pointer: coarse)").matches;
+      r.setSize(compact ? 640 : W, compact ? 400 : H, false);
       r.setClearColor(0x000000, 1);
       const scene = new Scene();
       const cam = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -69,11 +70,12 @@ export default function ScreenFx({ node }: { node: any }) {
       out.generateMipmaps = false;
       output = out;
       let lastDraw = -Infinity;
+      const frameMs = compact ? 1000 / 20 : FRAME_MS;
       const active = () => live && !document.hidden && getSelected() >= 0 && getSelectedPart() === "pedestal";
       const loop = (now: number) => {
         raf = null;
         if (!active()) return;
-        if (source && sourceOwner === getSelected() && now - lastDraw >= FRAME_MS - 0.1) {
+        if (source && sourceOwner === getSelected() && now - lastDraw >= frameMs - 0.1) {
           r.render(scene, cam);
           out!.needsUpdate = true;
           lastDraw = now;

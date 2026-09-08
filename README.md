@@ -1,54 +1,75 @@
 # Spatial Streaming
 
-A two hour workshop. You describe an organism in one sentence, a model plans its
-life cycle and builds six stages of it, you upload them to Miris, and they
-stream inside six containment capsules in a laboratory you publish and share.
+A two hour workshop for a mixed audience. Explore real Miris streams, choose
+prepared specimens or create your own, personalize a laboratory, and publish
+an experience you can share.
 
 ```
 npm install
 npm run dev
 ```
 
-Then follow the guide on the right. It writes most of the code for you if you
-ask it to, and explains what it wrote either way.
+Then follow the guide. Start with a real stream, personalize the supplied room,
+and publish. The optional code studio explains the implementation.
+
+## The core journey
+
+This branch starts with the completed room as a supplied foundation. Attendees
+make it their own through a name, a viewing style, specimen curation, and a
+published experience. Code and paid generation are optional.
+
+| Time | Core activity | Takeaway |
+|---|---|---|
+| 0–10 min | Enter the real prepared lab; predict, change the budget, observe | What Miris streaming contributes |
+| 10–30 min | Choose prepared, generated, or existing assets; personalize the lab | Ownership without a setup gate |
+| 30–55 min | Connect assets when ready; name a specimen and write its observation | Content, delivery, and presentation are separate |
+| 55–90 min | Compare budgets and viewpoints; optionally explore the code studio | A concrete tradeoff and an integration starting point |
+| 90–105 min | Publish and check a public link | A working experience outside the editor |
+| 105–120 min | Exchange links, try another device, record takeaways | A visitor’s response and a next-project idea |
+
+Every attendee can finish with the prepared six-stage series. Entering the lab
+uses the recorded real UUIDs and their scoped viewer key from `miris/fixtures.json`.
+It does not call fal, require an account, or create an archive. Existing specimen
+data is preserved when entering the new flow. The visible `previewSeries` is
+separate from an optional generation run, so switching to prepared specimens does
+not erase a paid run; submitted jobs keep running in the background.
+
+The ordinary guide leads through the core activities. **Optional code studio**
+contains the original technical lessons for SDK integration, scene construction,
+HTML-in-Canvas, and TSL. Those lessons are references, not gates to publishing.
+The complete reference copy lives in `miris/technicalCurriculum.ts`.
 
 ## Before you arrive
 
-Five minutes now saves twenty in the room.
+- Use a laptop, a current browser, and a charger. Running locally requires Node
+  20 or newer; in Bolt the environment is supplied.
+- Prepared specimens need no generation account or payment. Have presenters
+  verify the configured viewer key and all six streams on the venue network.
+- For **optional generation**, prepare a fal.ai account with billing and a key.
+  The guide explains `.env.local`; the key is needed only when Grow is pressed.
+  Budget roughly twelve dollars and twelve minutes for the workshop’s six-stage
+  run, with actual cost and duration depending on the services.
+- For **your own uploads**, create a Miris account before the session if possible.
+  You can still complete the workshop with prepared specimens if processing stalls.
+- The experimental Chrome HTML-in-Canvas flag is only relevant to the optional
+  code studio. The supplied fallback is sufficient for the core journey.
 
-1. **A fal.ai account with billing on.** The series is generated on your own
-   key, and a key without a card behind it stops at step 1.2. Sign up at
-   fal.ai, add a payment method, and create a key at fal.ai/dashboard/keys.
-   You will paste it in step 1.1.
-2. **A Miris account.** Sign up at app.miris.com. You upload six files to it
-   in step 3.1, and the signup is quicker done at home than on conference wifi.
-3. **Chrome, with one flag on.** Step 4.2 paints live HTML into the scene with
-   `ctx.drawElementImage`, which Chrome ships behind
-   `chrome://flags/#canvas-draw-element`. Turn it on and relaunch. Every other
-   browser falls back to an SVG path that works but looks plainer, and you
-   would be watching the fallback for the whole step.
-4. **A charger.** Chrome caps rendering at 30fps once a laptop hits 20%
-   battery, browser-wide, and the room will feel slow for no reason in the code.
-5. **Node 20 or newer** if you run it locally. In Bolt nothing to install.
+## Presenter priorities
 
-Total spend on your fal key is about twelve dollars: six images at a few cents
-each and six meshes at about $1.40 apiece. If you would rather not spend it,
-the guide has an **I already have a series** path at step 1.2 that fills the
-capsules from a series the presenters grew in advance.
+Show the actual lab immediately after the opening film. Ask for predictions
+before moving the budget controls; ask for observations before explaining the
+result. Clearly attribute generation to its model providers, asset processing
+and streaming to Miris, and the room/interface to React and three.js.
 
-## What happens, in order
+Do not wait for generation before continuing. At minute 90, move everyone to
+publishing; the guide offers a finale shortcut and a reminder. Protect the final
+half hour for opening a real public link and exchanging visitor feedback.
 
-| Step | You | Running in the background |
-|---|---|---|
-| 01 Set up | Paste your fal key. Describe a creature. | The series grows: about twelve minutes. |
-| 02 The laboratory | Build the deck, walkway and six capsules in three.js. Write the fit. | Still growing. Make your Miris account if you have not. |
-| 03 Go live | Download the archive, upload six files, scope a viewer key, seal the capsules. | Portal processing. |
-| 04 The dossier | Write HTML for the specimen's file, paint it into a canvas, hang it in the room. | |
-| 05 The readout | Add the HUD, read the streaming budget, write a TSL field on a second canvas. | |
-| 06 Ship it | Publish, send the link. | |
-
-The room is built while the meshes grow, which is the only reason two hours is
-enough. Do not wait for the tray to finish before starting step 2.
+Rehearse with a mixed audience, on the venue network and representative devices.
+Record time to first visible stream, setup failures, core completion, successful
+public links, and whether participants can explain Miris’s role without prompting.
+The budget exercise is an observation activity, not a benchmark. Any comparison
+with conventional loading needs matched conditions and explicit quality differences.
 
 ## What it is
 
@@ -58,8 +79,7 @@ in WebContainer, which is where most attendees run this.
 - `app/stage.tsx` is your file. It ships with `miris:` marker comments and the
   guide writes between them when you press **Or paste it for me**. Everything
   outside the markers is yours and is never touched.
-- `app/main.tsx` mounts the stage and the guide. You edit it once, at the end,
-  to remove the guide.
+- `app/main.tsx` mounts the stage and the guide. The guide hides in a published build, so removing it is optional.
 - `miris/` is the workshop's machinery: the guide, the curriculum, the
   snippets, the dev API that proxies fal, and a handful of scene helpers.
   Nothing in it needs editing to finish the workshop.
@@ -90,15 +110,13 @@ never overwrite a paid run.
 Offline is never inferred from a missing key: "FAL_KEY is not set" is a
 sentence attendees are meant to see.
 
-### The fallback series
+### The prepared series
 
-`FALLBACK_KEYS` in `miris/config.ts` is a list of viewer keys, each scoped to a
-six-stage series you grew and uploaded in advance. They show up as buttons
-under **I already have a series** at step 1.2. Anyone whose fal account is
-blocked, whose run failed, or who arrived late picks one and is streaming
-inside a minute. Viewer keys are public by design, so committing them is fine;
-what matters is that each is scoped to exactly its six assets. Grow three or
-four before the day. An empty list hides the buttons.
+`miris/fixtures.json` contains a recorded deep-sea series with six real asset IDs,
+dossiers, and its scoped viewer key. The core flow uses it immediately;
+`FALLBACK_KEYS` also exposes that key in the optional asset chooser. Verify the
+assets remain accessible before each session. Offline synthetic cubes remain
+separate from this real streaming demonstration.
 
 ### The SDK is vendored, and the pin is not negotiable
 
@@ -132,11 +150,11 @@ off and ACES could come back.
 ### Publishing
 
 The dev API is Vite middleware, so a built site has no endpoint behind it:
-nothing there can spend a fal key or rewrite a file. `miris/snapshot.ts` freezes
-`data.json` into `dist/api/miris` at build time so the published lab renders
-exactly what the attendee built. The guide detects the missing API by content
-type (a static host answers an unknown path with 200 and `text/html`) and
-renders nothing, so publishing with the guide still mounted is harmless.
+nothing there can spend a fal key or rewrite a file. `miris/snapshot.ts` writes
+the currently displayed specimens and saved design to `dist/miris-scene.json` at build
+time. Generation metadata and workshop reflections are excluded. Production
+builds explicitly omit the guide, independently of the static host’s content
+type headers. Keeping the guide mounted in the source is harmless.
 
 ### Known risks
 
@@ -161,3 +179,24 @@ fills in on its own once processing finishes.
 Browser verification lives outside this repo so a fork carries no Playwright:
 see `verify-stage.mjs` and `measure-seat.mjs` in the sibling `miris-atelier`
 checkout. `AGENTS.md` carries the measurement method for frame costs.
+
+## Mobile and shared-link acceptance
+
+The shared scene includes touch navigation independently of the guide: choose a
+specimen, drag to orbit, pinch to zoom, return with Overview, and open Read file
+for a full-size, scrollable record. The guide becomes a compact sheet on phones;
+Explore scene hides it and Guide brings it back. No keyboard is needed to visit.
+
+Small screens and coarse pointers use a pixel ratio of 1 while Miris keeps its
+adaptive splat budget. Their selected terminal effect uses a 640×400 canvas at
+20 Hz. Reduced-motion preferences stop specimen rotation, camera travel and the
+CRT animation. Pedestal painting has a fallback when native HTML-in-Canvas is
+unavailable; the readable record is ordinary HTML on every browser.
+
+Before sharing, open the actual HTTPS deployment on iPhone Safari and Android
+Chrome. Check portrait and landscape, all six specimens, a pinch/drag, Overview,
+Read file scrolling and closing, browser toolbar resizing, and a reload over a
+mobile connection. Confirm the guide and API-dependent controls are absent.
+Viewport emulation checks layout; it does not establish physical phone GPU,
+memory, thermal or browser compatibility. Modern WebGL2-capable browsers are
+required for the live 3D scene; no experimental HTML-in-Canvas flag is required.
