@@ -18,6 +18,8 @@ import { TRACKS } from "./tracks";
 const ROOT = process.cwd();
 const MIRIS_DIR = join(ROOT, "miris");
 const STAGE = join(ROOT, "app", "stage.tsx");
+/* What the stage returns to on reset: the file attendees start from. */
+const TEMPLATE = join(ROOT, "miris", "stage.template.tsx");
 const ZIP = join(ROOT, "miris", "specimens.zip");
 /* Offline builds its own archive rather than overwriting the real one: the
    129MB of creature meshes from a paid run are not worth losing to a rehearsal. */
@@ -441,6 +443,14 @@ async function handle(action: string, body: any, mode: string): Promise<Reply> {
 
     case "save":
       return ok(await writeData(MIRIS_DIR, body.patch ?? {}));
+
+    /* Every step back to the start: the stage returns to the template and the
+       pointer to 1.1. The series, its uuids and the viewer key stay, so nothing
+       has to be grown or uploaded again. */
+    case "reset": {
+      await writeFile(STAGE, await readFile(TEMPLATE, "utf8"));
+      return ok(await writeData(MIRIS_DIR, { step: "1.1", sub: "1.1", active: 0, finished: false }));
+    }
 
     case "check": {
       const check = CHECKS[String(body.check ?? "")];

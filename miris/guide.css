@@ -938,6 +938,11 @@ a:hover { text-decoration: underline; }
 
 .mw-bar-label,
 .mw-bar-change { position: relative; z-index: 1; }
+.mw-bar-change + .mw-bar-change { margin-left: 14px; }
+
+/* The one question the guide asks before it does something you cannot undo. */
+.mw-reset { padding: 12px 20px 14px; border-bottom: 1px solid var(--mw-line, #182329); }
+.mw-reset p { margin: 0 0 10px; color: #c8d4da; font-size: 13px; line-height: 1.5; }
 .mw-bar-label { color: var(--accent); }
 
 @media (prefers-reduced-motion: reduce) {
