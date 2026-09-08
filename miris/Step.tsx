@@ -205,9 +205,6 @@ export default function StepPane({
           >
             <div className="mw-now-eb">
               <p className="l12">Step {sub.num}</p>
-              <span className="mw-lod" aria-hidden="true">
-                <i /><i /><i /><i />
-              </span>
             </div>
 
             <h3 className="mw-now-title">{withNoun(sub.title, track.noun)}</h3>

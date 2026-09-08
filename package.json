@@ -9,8 +9,8 @@
     "reference": "node scripts/workshop-reference.mjs"
   },
   "dependencies": {
-    "@miris-inc/core": "file:vendor/miris-inc-core-0.0.9-budget-lab.bd3d02d.tgz",
-    "@miris-inc/three": "file:vendor/miris-inc-three-0.0.9-budget-lab.bd3d02d.tgz",
+    "@miris-inc/core": "file:vendor/miris-inc-core-0.0.9-budget-lab.28ccca1.tgz",
+    "@miris-inc/three": "file:vendor/miris-inc-three-0.0.9-budget-lab.28ccca1.tgz",
     "@react-three/drei": "^10.7.8",
     "@react-three/fiber": "^9.7.0",
     "react": "^19.2.8",
