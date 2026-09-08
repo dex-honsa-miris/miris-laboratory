@@ -145,31 +145,136 @@ function PressureDoor() {
   </group>;
 }
 
-export function VaultCapsule({ index }: { index: number }) {
-  const a = index * Math.PI / 3;
-  return <group position={[Math.cos(a) * 4.2, 0, Math.sin(a) * 4.2]} rotation={[0, -a + Math.PI / 2, 0]}>
-    {[0.17, 3.1].map(y => <group key={y} position={[0, y, 0]}>
-      <mesh><cylinderGeometry args={[1.08, 1.16, 0.32, 48]} /><meshStandardMaterial color={enamel} metalness={0.55} roughness={0.48} /></mesh>
+/* Where the six capsules stand, and how each one is built. Every number that
+   used to sit inline in the JSX has a name here. */
+const CAPSULE_RING_RADIUS = 4.2; // metres from the middle of the room
+const CAPSULES = 6;
+
+const GLASS_RADIUS = 0.9;
+const GLASS_HEIGHT = 2.6;
+const GLASS_CENTRE_Y = 1.66; // the glass runs from 0.36 to 2.96
+const GLASS_BOTTOM_RING_Y = 0.35;
+const GLASS_TOP_RING_Y = 2.96;
+
+const END_CAP_Y = { bottom: 0.17, top: 3.1 };
+const REAR_POST_X = 0.74; // one steel post either side, behind the glass
+const LAMP_Y = { housing: 4.98, face: 4.89, stem: 5.3 };
+const LABEL = { y: 3.12, z: 1.1, width: 0.95, height: 0.15 };
+
+const capsuleBlue = 0x94cfff;
+const shaftBlue = 0xa4dcff;
+
+/** Where capsule `index` stands: on the ring, sixty degrees from its
+ *  neighbours, turned so its front faces the middle of the room. */
+function capsulePlacement(index: number) {
+  const angle = (index * Math.PI * 2) / CAPSULES;
+  return {
+    position: [Math.cos(angle) * CAPSULE_RING_RADIUS, 0, Math.sin(angle) * CAPSULE_RING_RADIUS] as [number, number, number],
+    facing: -angle + Math.PI / 2,
+  };
+}
+
+/** The enamel disc that closes each end of the tube, with its two rings and
+ *  twelve bolts. The same part serves top and bottom. */
+function EndCap({ y }: { y: number }) {
+  return (
+    <group position={[0, y, 0]}>
+      <mesh>
+        <cylinderGeometry args={[1.08, 1.16, 0.32, 48]} />
+        <meshStandardMaterial color={enamel} metalness={0.55} roughness={0.48} />
+      </mesh>
       <Ring radius={1.14} y={0.02} tube={0.018} lit />
       <Ring radius={1.15} y={-0.1} tube={0.025} color={steel} />
-      <StaticInstances transforms={capBolts}><cylinderGeometry args={[0.045, 0.045, 0.04, 6]} /><meshStandardMaterial color="#172932" metalness={0.8} roughness={0.4} /></StaticInstances>
-    </group>)}
-    {[-0.74, 0.74].map(x => <group key={x}>
-      <mesh position={[x, 1.65, -0.7]}><boxGeometry args={[0.13, 2.8, 0.19]} /><meshStandardMaterial color={steel} metalness={0.7} roughness={0.4} /></mesh>
-      <mesh position={[x, 1.65, -0.59]}><boxGeometry args={[0.035, 2.35, 0.025]} /><meshBasicMaterial color={blue} /></mesh>
-    </group>)}
-    <mesh position={[0, 1.66, 0]} name={"glass-" + index}>
-      <cylinderGeometry args={[0.9, 0.9, 2.6, 48, 1, true]} />
-      <meshStandardMaterial color="#a4dcff" transparent opacity={0.035} roughness={0.22} metalness={0.1} depthWrite={false} side={DoubleSide} />
+      <StaticInstances transforms={capBolts}>
+        <cylinderGeometry args={[0.045, 0.045, 0.04, 6]} />
+        <meshStandardMaterial color="#172932" metalness={0.8} roughness={0.4} />
+      </StaticInstances>
+    </group>
+  );
+}
+
+/** A steel upright behind the glass, with a thin blue light strip on its face. */
+function RearPost({ x }: { x: number }) {
+  return (
+    <group>
+      <mesh position={[x, GLASS_CENTRE_Y, -0.7]}>
+        <boxGeometry args={[0.13, 2.8, 0.19]} />
+        <meshStandardMaterial color={steel} metalness={0.7} roughness={0.4} />
+      </mesh>
+      <mesh position={[x, GLASS_CENTRE_Y, -0.59]}>
+        <boxGeometry args={[0.035, 2.35, 0.025]} />
+        <meshBasicMaterial color={blue} />
+      </mesh>
+    </group>
+  );
+}
+
+/** The tube itself: almost clear, drawn on both sides, and named so GlassOrder
+ *  can decide its draw order against the splats each frame. */
+function Glass({ index }: { index: number }) {
+  return (
+    <mesh position={[0, GLASS_CENTRE_Y, 0]} name={`glass-${index}`}>
+      <cylinderGeometry args={[GLASS_RADIUS, GLASS_RADIUS, GLASS_HEIGHT, 48, 1, true]} />
+      <meshStandardMaterial
+        color="#a4dcff"
+        transparent
+        opacity={0.035}
+        roughness={0.22}
+        metalness={0.1}
+        depthWrite={false}
+        side={DoubleSide}
+      />
     </mesh>
-    <Ring radius={0.92} y={0.35} tube={0.024} lit />
-    <Ring radius={0.92} y={2.96} tube={0.024} lit />
-    <Pulse color={0x94cfff} seed={index / 6} />
-    <FloorGlow color={0x94cfff} opacity={0.32} radius={1.75} />
-    <LightShaft color={0xa4dcff} radius={1.1} strength={0.2} />
-    <mesh position={[0, 4.98, 0]}><cylinderGeometry args={[0.45, 0.58, 0.16, 32]} /><meshStandardMaterial color={steel} metalness={0.65} roughness={0.4} /></mesh>
-    <mesh position={[0, 4.89, 0]} rotation={[Math.PI / 2, 0, 0]}><circleGeometry args={[0.42, 32]} /><meshBasicMaterial color="#d2ebff" /></mesh>
-    <mesh position={[0, 5.3, 0]}><cylinderGeometry args={[0.08, 0.08, 0.6, 12]} /><meshStandardMaterial color={steel} /></mesh>
-    <group position={[0, 3.12, 1.1]}><VaultLabel text={"SPECIMEN / " + String(index + 1).padStart(2, "0")} width={0.95} height={0.15} /></group>
-  </group>;
+  );
+}
+
+/** The lamp above the tube: a steel housing, a lit face, and the stem to the ceiling. */
+function Lamp() {
+  return (
+    <>
+      <mesh position={[0, LAMP_Y.housing, 0]}>
+        <cylinderGeometry args={[0.45, 0.58, 0.16, 32]} />
+        <meshStandardMaterial color={steel} metalness={0.65} roughness={0.4} />
+      </mesh>
+      <mesh position={[0, LAMP_Y.face, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[0.42, 32]} />
+        <meshBasicMaterial color="#d2ebff" />
+      </mesh>
+      <mesh position={[0, LAMP_Y.stem, 0]}>
+        <cylinderGeometry args={[0.08, 0.08, 0.6, 12]} />
+        <meshStandardMaterial color={steel} />
+      </mesh>
+    </>
+  );
+}
+
+/** One containment capsule: two end caps, two rear posts, the glass with its
+ *  rings and light effects, the lamp above, and a numbered label on the front. */
+export function VaultCapsule({ index }: { index: number }) {
+  const { position, facing } = capsulePlacement(index);
+  const label = `SPECIMEN / ${String(index + 1).padStart(2, "0")}`;
+
+  return (
+    <group position={position} rotation={[0, facing, 0]}>
+      <EndCap y={END_CAP_Y.bottom} />
+      <EndCap y={END_CAP_Y.top} />
+
+      <RearPost x={-REAR_POST_X} />
+      <RearPost x={REAR_POST_X} />
+
+      <Glass index={index} />
+      <Ring radius={GLASS_RADIUS + 0.02} y={GLASS_BOTTOM_RING_Y} tube={0.024} lit />
+      <Ring radius={GLASS_RADIUS + 0.02} y={GLASS_TOP_RING_Y} tube={0.024} lit />
+
+      <Pulse color={capsuleBlue} seed={index / CAPSULES} />
+      <FloorGlow color={capsuleBlue} opacity={0.32} radius={1.75} />
+      <LightShaft color={shaftBlue} radius={1.1} strength={0.2} />
+
+      <Lamp />
+
+      <group position={[0, LABEL.y, LABEL.z]}>
+        <VaultLabel text={label} width={LABEL.width} height={LABEL.height} />
+      </group>
+    </group>
+  );
 }
