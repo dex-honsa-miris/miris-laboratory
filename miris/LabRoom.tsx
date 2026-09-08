@@ -28,7 +28,7 @@ function Ring({ radius, y, tube = 0.025, color = blue, lit = false }: { radius: 
   </mesh>;
 }
 
-export function VaultLabel({ text, width = 2, height = 0.35 }: { text: string; width?: number; height?: number }) {
+export function LabLabel({ text, width = 2, height = 0.35 }: { text: string; width?: number; height?: number }) {
   const map = useMemo(() => {
     const canvas = document.createElement("canvas");
     canvas.width = 1024; canvas.height = 160;
@@ -43,7 +43,7 @@ export function VaultLabel({ text, width = 2, height = 0.35 }: { text: string; w
   return <mesh><planeGeometry args={[width, height]} /><meshBasicMaterial map={map} /></mesh>;
 }
 
-export function VaultFloor({ floor }: { floor: Record<string, Texture> }) {
+export function LabFloor({ floor }: { floor: Record<string, Texture> }) {
   return <>
     <color attach="background" args={["#08121c"]} />
     <fog attach="fog" args={["#08121c", 12, 32]} />
@@ -68,7 +68,7 @@ export function VaultFloor({ floor }: { floor: Record<string, Texture> }) {
   </>;
 }
 
-export function VaultWalkway({ walk, wear }: { walk: Texture; wear: Texture }) {
+export function LabWalkway({ walk, wear }: { walk: Texture; wear: Texture }) {
   return <group>
     <mesh position={[0, 0.015, 0]}><cylinderGeometry args={[3.8, 3.86, 0.07, 96]} /><meshStandardMaterial color="#34434d" map={walk} roughnessMap={wear} metalness={0.5} roughness={0.6} /></mesh>
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.054, 0]}><ringGeometry args={[2.62, 3.73, 96]} /><meshStandardMaterial color="#a1b0b5" map={walk} roughness={0.65} metalness={0.45} /></mesh>
@@ -81,7 +81,7 @@ export function VaultWalkway({ walk, wear }: { walk: Texture; wear: Texture }) {
       <mesh position={[0, 5.45, -4.2]}><boxGeometry args={[1.4, 0.1, 0.16]} /><meshBasicMaterial color="#b2d7ea" /></mesh>
     </group>)}
     <Ring radius={1.45} y={0.057} tube={0.012} color="#6a8797" />
-    <group rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.06, -1.1]}><VaultLabel text="BIOLOGY DIVISION / 06" width={1.8} height={0.28} /></group>
+    <group rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.06, -1.1]}><LabLabel text="BIOLOGY DIVISION / 06" width={1.8} height={0.28} /></group>
     <mesh position={[0, 0.015, -7.2]}><boxGeometry args={[2.3, 0.08, 7.4]} /><meshStandardMaterial color="#6e818a" map={walk} roughness={0.6} metalness={0.5} /></mesh>
     {[-1.12, 1.12].map(x => <mesh key={x} position={[x, 0.065, -7.2]}><boxGeometry args={[0.04, 0.025, 7.4]} /><meshBasicMaterial color={blue} /></mesh>)}
     {slots(12).map(i => <mesh key={i} position={[0, 0.06, -4.1 - i * 0.56]}><boxGeometry args={[2.15, 0.006, 0.02]} /><meshStandardMaterial color="#1c303c" /></mesh>)}
@@ -255,7 +255,7 @@ function Lamp() {
 }
 
 /** One containment capsule, part by part. */
-export function VaultCapsule({ index }: { index: number }) {
+export function LabCapsule({ index }: { index: number }) {
   const { position, facing } = capsulePlacement(index);
   const label = `SPECIMEN / ${String(index + 1).padStart(2, "0")}`;
 
@@ -278,7 +278,7 @@ export function VaultCapsule({ index }: { index: number }) {
       <Lamp />
 
       <group position={[0, glassTop + CAP.thickness / 2, LABEL.standoff]}>
-        <VaultLabel text={label} width={LABEL.width} height={LABEL.height} />
+        <LabLabel text={label} width={LABEL.width} height={LABEL.height} />
       </group>
     </group>
   );
