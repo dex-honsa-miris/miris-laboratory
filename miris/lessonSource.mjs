@@ -22,7 +22,7 @@ export function applyLesson(source, id) {
   if (id === 'file') {
     const block = readMarker(source, 'parts');
     const parsed = ts.createSourceFile('parts.tsx', block, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
-    const previous = parsed.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'File');
+    const previous = parsed.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'SpecimenFile');
     const next = previous ? block.slice(0, previous.getFullStart()) + '\n\n' + PARTS.file + block.slice(previous.end)
       : block.trimEnd() + '\n\n' + PARTS.file;
     return replaceMarker(source, 'parts', next.trim());

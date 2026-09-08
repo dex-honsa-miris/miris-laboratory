@@ -55,7 +55,7 @@ function FitInGlass({ position, fill = 0.7, children }: any) {
 
 // Paint the markup into a canvas and wear it as a texture. The browser lays
 // the HTML out, drawElementImage copies the pixels, and three samples them.
-function File({ html }: { html: string }) {
+function SpecimenFile({ html }: { html: string }) {
   const { texture, width, height } = useHtmlTexture(html);
   if (!texture) return null;
   return (
@@ -173,7 +173,7 @@ export default function Stage({ initialData }: { initialData?: any } = {}) {
 
       {/* miris:card-start */}
       <Dossier specimens={specimens} />
-      <Pedestals specimens={specimens}>{(d: any) => <File html={fileMarkup(d)} />}</Pedestals>
+      <Pedestals specimens={specimens}>{(d: any) => <SpecimenFile html={fileMarkup(d)} />}</Pedestals>
       {/* miris:card-end */}
 
 

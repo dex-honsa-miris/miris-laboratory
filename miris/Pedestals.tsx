@@ -122,12 +122,22 @@ const Pedestal = memo(function Pedestal({ i, specimen, specimens, active, childr
         {/* A plane faces +Z; laid flat here its normal is the head's up, and the
             top of the picture points away from the reader, as a page does. */}
         <group ref={screenGroup} position={[0, 0.108, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <Quietly>{children(file)}</Quietly>
+          <Quietly>
+            <Painted render={children} file={file} />
+          </Quietly>
         </group>
       </group>
     </group>
   );
 });
+
+/* The attendee's render function runs here, inside the boundary below, so a
+   throw in it is caught. Called inline in the pedestal's own render it ran
+   before the boundary existed, and one missing fileMarkup took the whole
+   canvas down. */
+function Painted({ render, file }: { render: (d: any) => ReactNode; file: any }) {
+  return <>{render(file)}</>;
+}
 
 /* The child is the attendee's code mid-edit. A throw there should cost the
    screen, not the room. */
@@ -140,7 +150,10 @@ class Quietly extends Component<{ children: ReactNode }, { failed: boolean }> {
     console.warn("The file's markup or paint threw; showing no screen until it is fixed.", e);
   }
   componentDidUpdate(prev: { children: ReactNode }) {
-    if (this.state.failed && prev.children !== this.props.children) this.setState({ failed: false });
+    // A hot reload hands in new children; try again then, not every render.
+    const a: any = (prev.children as any)?.props;
+    const b: any = (this.props.children as any)?.props;
+    if (this.state.failed && a?.render !== b?.render) this.setState({ failed: false });
   }
   render() {
     return this.state.failed ? null : this.props.children;

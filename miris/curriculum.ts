@@ -203,7 +203,7 @@ try {
         fill: "card",
         check: "cardOverlay",
         explain:
-          "Pedestals places a screen in front of each tube and asks your File component to paint that specimen's file onto it. Clicks are tested against projected outlines, so none of your meshes needs a handler.",
+          "Pedestals places a screen in front of each tube and asks your SpecimenFile component to paint that specimen's file onto it. Clicks are tested against projected outlines, so none of your meshes needs a handler.",
       },
     ],
   },

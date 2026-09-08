@@ -26,13 +26,13 @@ test('curriculum and snippets describe exactly the same ordered build', () => {
   }
 });
 
-test('adding File preserves the fitting code attendees already customized', () => {
+test('adding SpecimenFile preserves the fitting code attendees already customized', () => {
   let stage = applyLesson(starter, 'fit').replace('0.08', '0.04');
   const fit = readMarker(stage, 'parts');
   stage = applyLesson(stage, 'file');
   assert.ok(readMarker(stage, 'parts').startsWith(fit.trimEnd()));
   assert.match(readMarker(stage, 'parts'), /0\.04/);
-  assert.equal((readMarker(applyLesson(stage, 'file'), 'parts').match(/function File\(/g) || []).length, 1);
+  assert.equal((readMarker(applyLesson(stage, 'file'), 'parts').match(/function SpecimenFile\(/g) || []).length, 1);
 });
 
 test('clearing dependencies removes their pedestal consumer', () => {

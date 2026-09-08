@@ -95,7 +95,7 @@ const FIT = `function FitInGlass({ position, fill = 0.7, children }: any) {
 
 const FILE = `// Paint the markup into a canvas and wear it as a texture. The browser lays
 // the HTML out, drawElementImage copies the pixels, and three samples them.
-function File({ html }: { html: string }) {
+function SpecimenFile({ html }: { html: string }) {
   const { texture, width, height } = useHtmlTexture(html);
   if (!texture) return null;
   return (
@@ -107,7 +107,7 @@ function File({ html }: { html: string }) {
 }`;
 
 const CARD_PANEL = `      <Dossier specimens={specimens} />
-      <Pedestals specimens={specimens}>{(d: any) => <File html={fileMarkup(d)} />}</Pedestals>`;
+      <Pedestals specimens={specimens}>{(d: any) => <SpecimenFile html={fileMarkup(d)} />}</Pedestals>`;
 
 export const SNIPPETS = {
   floor: FLOOR,
