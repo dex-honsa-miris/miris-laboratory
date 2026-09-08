@@ -173,8 +173,10 @@ screen. It finds the glass by the `glass-N` name the capsule snippet gives it.
 
 **TSL reaches the pedestal screens by copy, not by sharing a canvas.** The
 glitch graph renders in `miris/ScreenFx.tsx`, a second renderer drawing one
-quad into an unseen canvas with the painted file as input; `Pedestals.tsx`
-swaps that canvas in as the selected pedestal's screen texture each frame.
+quad into an unseen canvas with the painted file as input. Each completed
+frame is copied immediately into a persistent 2D canvas before WebGL can
+discard its drawing buffer; `Pedestals.tsx` only uses a frame matching the
+selected record. Until then, or if the effect fails, it keeps the painted file.
 One screen is one upload a frame; six would be too many, so the other five
 show the file as painted. `screen` is one DataTexture object whose pixels are
 swapped to the active file, so the attendee's graph can name it.

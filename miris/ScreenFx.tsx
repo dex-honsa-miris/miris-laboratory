@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { CanvasTexture, DataTexture, LinearFilter, RGBAFormat, SRGBColorSpace, type Texture, UnsignedByteType } from "three";
 import { Mesh, MeshBasicNodeMaterial, OrthographicCamera, PlaneGeometry, Scene, WebGPURenderer } from "three/webgpu";
 import { getSelected, getSelectedPart, subscribeLab } from "./labState";
+import { terminalFrames } from "./terminalFrames.mjs";
 
 // Only the visible terminal needs a CRT frame; keep its cross-canvas upload at 30 Hz.
 const W = 1024;
@@ -16,8 +17,8 @@ screen.needsUpdate = true;
 
 let source: Texture | null = null;
 let sourceOwner = -1;
-let output: CanvasTexture | null = null;
-export const getScreenOutput = () => output;
+const frames = terminalFrames();
+export const getScreenOutput = (painted: Texture | null, owner: number): CanvasTexture | null => frames.get(painted, owner);
 
 export function setScreenSource(t: Texture, owner: number) {
   sourceOwner = owner;
@@ -44,6 +45,19 @@ export default function ScreenFx({ node }: { node: any }) {
     let out: CanvasTexture | null = null;
     let unsubscribe = () => {};
     let onVisibility = () => {};
+    let failed = false;
+    const fail = (error: unknown) => {
+      failed = true;
+      frames.clear();
+      if (raf !== null) cancelAnimationFrame(raf);
+      raf = null;
+      if (live) console.warn("CRT renderer unavailable; keeping the painted terminal.", error);
+    };
+    const onContextLost = (event: Event) => {
+      event.preventDefault();
+      fail(new Error("The terminal graphics context was lost."));
+    };
+    canvas.addEventListener("webglcontextlost", onContextLost);
 
     (async () => {
       const r = new WebGPURenderer({ canvas, forceWebGL: true, antialias: false });
@@ -62,23 +76,36 @@ export default function ScreenFx({ node }: { node: any }) {
       matRef.current = mat;
       geometry = new PlaneGeometry(2, 2);
       scene.add(new Mesh(geometry, mat));
-      out = new CanvasTexture(canvas);
+      const captured = document.createElement("canvas");
+      captured.width = canvas.width;
+      captured.height = canvas.height;
+      const capture = captured.getContext("2d");
+      if (!capture) throw new Error("No terminal frame capture context.");
+      out = new CanvasTexture(captured);
       out.flipY = true;
       out.colorSpace = SRGBColorSpace;
       out.minFilter = LinearFilter;
       out.magFilter = LinearFilter;
       out.generateMipmaps = false;
-      output = out;
       let lastDraw = -Infinity;
       const frameMs = compact ? 1000 / 20 : FRAME_MS;
-      const active = () => live && !document.hidden && getSelected() >= 0 && getSelectedPart() === "pedestal";
+      const active = () => live && !failed && !document.hidden && getSelected() >= 0 && getSelectedPart() === "pedestal";
       const loop = (now: number) => {
         raf = null;
         if (!active()) return;
         if (source && sourceOwner === getSelected() && now - lastDraw >= frameMs - 0.1) {
-          r.render(scene, cam);
-          out!.needsUpdate = true;
-          lastDraw = now;
+          try {
+            r.render(scene, cam);
+            // Copy before WebGL discards its buffer; the scene uploads on another frame.
+            capture.clearRect(0, 0, captured.width, captured.height);
+            capture.drawImage(canvas, 0, 0);
+            out!.needsUpdate = true;
+            frames.commit(out, source, sourceOwner);
+            lastDraw = now;
+          } catch (error) {
+            fail(error);
+            return;
+          }
         }
         raf = requestAnimationFrame(loop);
       };
@@ -98,7 +125,7 @@ export default function ScreenFx({ node }: { node: any }) {
       document.addEventListener("visibilitychange", onVisibility);
       sync();
     })().catch((error) => {
-      if (live) console.warn("CRT renderer unavailable; keeping the painted terminal.", error);
+      if (live) fail(error);
       renderer?.dispose();
     });
 
@@ -107,7 +134,8 @@ export default function ScreenFx({ node }: { node: any }) {
       if (raf !== null) cancelAnimationFrame(raf);
       unsubscribe();
       document.removeEventListener("visibilitychange", onVisibility);
-      if (output === out) output = null;
+      canvas.removeEventListener("webglcontextlost", onContextLost);
+      frames.clear();
       if (matRef.current === material) matRef.current = null;
       out?.dispose();
       material?.dispose();

@@ -82,9 +82,9 @@ const Pedestal = memo(function Pedestal({ i, specimen, specimens, active, childr
     const { width: w, height: h } = plane.geometry.parameters;
     g.scale.setScalar(Math.min(SCREEN.w / w, SCREEN.h / h));
     const mat = plane.material;
-    const out = getScreenOutput();
     // Remember the painted texture, whatever the glitch pass swaps in.
     if (mat.map && mat.map !== appliedEffect.current) painted.current = mat.map;
+    const out = getScreenOutput(painted.current, i);
     const want = active && getSelectedPart() === "pedestal" && out && painted.current ? out : painted.current;
     if (active && painted.current) setScreenSource(painted.current, i);
     if (want && mat.map !== want) {
