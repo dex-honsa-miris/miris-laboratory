@@ -218,7 +218,8 @@ export default function LabHud({ specimens = [] as any[], title = "Sublevel 7" }
           cost this frame; budget is what the controller allows, or what the
           slider pinned. Drag it down and watch the far capsules coarsen first. */}
       {live > 0 && budget.live && (
-        <div className="mw-hud-budget">
+        <details className="mw-hud-budget">
+          <summary><i />Streaming<svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5 8 5 5 5-5" stroke="currentColor" strokeWidth="1.5" /></svg></summary>
           <span>
             <b>{kilo(budget.drawn)}</b> of <b>{kilo(budget.budget)}</b> splats
             {" · "}
@@ -242,7 +243,7 @@ export default function LabHud({ specimens = [] as any[], title = "Sublevel 7" }
               </button>
             )}
           </label>
-        </div>
+        </details>
       )}
       {box && (
         <div className="mw-brackets" style={{ left: box.x, top: box.y, width: box.w, height: box.h }}>

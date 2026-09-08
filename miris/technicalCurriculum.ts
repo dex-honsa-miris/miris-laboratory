@@ -119,7 +119,7 @@ export const TECHNICAL_STEPS: Step[] = [
         fill: "streams",
         check: "streams",
         explain:
-          "extend registers MirisStream as a JSX tag, so a stream accepts transforms like other three.js objects. Its coarse representation arrives first and gains detail as streaming continues. On phones, the shared scene also supplies a touch specimen picker, Overview and a readable HTML file sheet. The six subscriptions share an adaptive splat budget, which spends detail according to the view. The stream map uses the same 4.2-metre circle as the housings. FitInGlass is a separate wrapper: it measures and centers the asset, then turns the centered group slowly unless reduced motion is requested. Keeping fitting and rotation outside the stream makes them ordinary scene behavior.",
+          "extend registers MirisStream as a JSX tag, so a stream accepts transforms like other three.js objects. Its coarse representation arrives first and gains detail as streaming continues. On phones, the shared scene also supplies a touch specimen picker, Overview and a Read file control that approaches the physical pedestal. The six subscriptions share an adaptive splat budget, which spends detail according to the view. The stream map uses the same 4.2-metre circle as the housings. FitInGlass is a separate wrapper: it measures and centers the asset, then turns the centered group slowly unless reduced motion is requested. Keeping fitting and rotation outside the stream makes them ordinary scene behavior.",
       },
       {
         num: "2.5",

@@ -222,24 +222,6 @@ body:has(.mw-panel) .mw-dossier-panel { right: calc(min(408px, 100vw) + 24px); }
 
 .mw-hud-tl { top: max(20px, env(safe-area-inset-top)); left: max(22px, env(safe-area-inset-left)); max-width: calc(100% - var(--mw-side, 0px) - 44px); }
 .mw-hud-tl b { overflow-wrap: anywhere; }
-.mw-scene-controls {
-  position: fixed; z-index: 5; bottom: max(20px, env(safe-area-inset-bottom));
-  left: calc((100% - var(--mw-side, 0px)) / 2); transform: translateX(-50%);
-  width: min(340px, calc(100% - 24px)); padding: 12px; border: 1px solid #456376;
-  border-radius: 12px; background: #091723f2; color: #c7e7fa;
-  font: 13px/1.5 system-ui, sans-serif; box-shadow: 0 8px 32px #0008;
-}
-.mw-scene-controls p { margin: 0 0 8px; font-size: 12px; text-align: center; color: #9ac3db; }
-.mw-scene-picker { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; gap: 8px; }
-.mw-scene-actions { display: flex; gap: 8px; margin-top: 8px; }
-.mw-scene-actions button { flex: 1; }
-.mw-scene-controls button, .mw-scene-controls select, .mw-reader button {
-  min-height: 44px; min-width: 44px; padding: 8px; border-radius: 6px;
-  border: 1px solid #456376; background: #152c3b; color: #d5edfb; font: inherit; cursor: pointer;
-}
-.mw-scene-controls select { width: 100%; font-size: 16px; }
-.mw-scene-controls button:disabled { opacity: .45; cursor: default; }
-.mw-scene-controls :focus-visible, .mw-reader :focus-visible { outline: 2px solid #c7e7fa; outline-offset: 2px; }
 .mw-reader {
   width: min(540px, calc(100% - 24px)); max-height: calc(100dvh - 40px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   padding: 0; border: 1px solid #648fa8; border-radius: 14px; overflow-y: auto; overscroll-behavior: contain;
@@ -247,7 +229,8 @@ body:has(.mw-panel) .mw-dossier-panel { right: calc(min(408px, 100vw) + 24px); }
 }
 .mw-reader::backdrop { background: #020910bc; }
 .mw-reader header { position: sticky; top: 0; display: flex; gap: 12px; align-items: center; justify-content: space-between; padding: 12px 18px; border-bottom: 1px solid #304d60; background: #0b1b28; font: 12px/1.4 ui-monospace, monospace; }
-.mw-reader button { font-size: 24px; }
+.mw-reader button { display: grid; place-items: center; min-width: 44px; min-height: 44px; border: 0; border-radius: 6px; color: #c7e7fa; background: #193242; cursor: pointer; }
+.mw-reader :focus-visible { outline: 2px solid #c7e7fa; outline-offset: 2px; }
 .mw-reader-body { padding: 20px 24px 28px; overflow-wrap: anywhere; }
 .mw-reader-body p { margin: 0 0 20px; white-space: pre-line; }
 .mw-reader-code { font: 12px/1.5 ui-monospace, monospace; color: #94b8ce; }
@@ -277,7 +260,15 @@ body:has(.mw-panel) .mw-dossier-panel { right: calc(min(408px, 100vw) + 24px); }
   body:has(.mw-panel) .mw-scene-controls { display: none; }
   body:has(.mw-tab) .mw-hud-tl { max-width: calc(100% - 112px); }
 }
-@media (max-height: 500px) and (orientation: landscape) {
-  .mw-scene-controls { left: auto; right: max(12px, env(safe-area-inset-right)); transform: none; width: 300px; }
-  body:has(.mw-panel) .mw-scene-controls { display: none; }
-}
+
+.mw-hud-budget { display: block; font: 12px/1.5 "Geist", system-ui, sans-serif; letter-spacing: 0; text-transform: none; padding: 0; background: #0c1a24ee; border: 1px solid #67839855; border-radius: 9px; color: #c4d9e6; }
+.mw-hud-budget summary { display: flex; align-items: center; gap: 9px; min-height: 44px; padding: 10px 12px; cursor: pointer; list-style: none; }
+.mw-hud-budget summary::-webkit-details-marker { display: none; }
+.mw-hud-budget summary > i { width: 5px; height: 5px; border-radius: 50%; background: #b2def7; }
+.mw-hud-budget summary > svg { margin-left: auto; }
+.mw-hud-budget[open] summary { border-bottom: 1px solid #67839833; }
+.mw-hud-budget[open] summary > svg { transform: rotate(180deg); }
+.mw-hud-budget > span { display: block; padding: 10px 12px 0; font-size: 11px; }
+.mw-hud-budget label { padding: 0 12px 6px; }
+.mw-hud-budget :focus-visible { outline: 2px solid #b7dfff; outline-offset: 2px; }
+@media (max-width: 720px) { .mw-hud-budget { padding: 0; } }

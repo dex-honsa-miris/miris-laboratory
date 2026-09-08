@@ -184,18 +184,20 @@ checkout. `AGENTS.md` carries the measurement method for frame costs.
 
 The shared scene includes touch navigation independently of the guide: choose a
 specimen, drag to orbit, pinch to zoom, return with Overview, and open Read file
-for a full-size, scrollable record. The guide becomes a compact sheet on phones;
+to approach the physical pedestal terminal. Pinch to inspect its text, then
+use Specimen to return to the capsule. The guide becomes a compact sheet on phones;
 Explore scene hides it and Guide brings it back. No keyboard is needed to visit.
 
 Small screens and coarse pointers use a pixel ratio of 1 while Miris keeps its
 adaptive splat budget. Their selected terminal effect uses a 640×400 canvas at
 20 Hz. Reduced-motion preferences stop specimen rotation, camera travel and the
 CRT animation. Pedestal painting has a fallback when native HTML-in-Canvas is
-unavailable; the readable record is ordinary HTML on every browser.
+unavailable; the file remains on the pedestal in the live scene. A readable HTML record
+is available only in the recovery view when the 3D scene cannot open.
 
 Before sharing, open the actual HTTPS deployment on iPhone Safari and Android
 Chrome. Check portrait and landscape, all six specimens, a pinch/drag, Overview,
-Read file scrolling and closing, browser toolbar resizing, and a reload over a
+Read file pedestal framing and return to Specimen, browser toolbar resizing, and a reload over a
 mobile connection. Confirm the guide and API-dependent controls are absent.
 Viewport emulation checks layout; it does not establish physical phone GPU,
 memory, thermal or browser compatibility. Modern WebGL2-capable browsers are

@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { Vector3 } from "three";
 import { getSelected, getSelectedPart } from "./labState";
 import useScenePreferences from "./useScenePreferences";
-import { screenFrame } from "./Pedestals";
+import { screenFrame, SCREEN } from "./Pedestals";
 
 const RING = 4.2;
 const EYE = 1.7;
@@ -38,7 +38,7 @@ const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 
 /** Walks the camera to whichever capsule is open, and back to the middle of
  *  the room when it closes. Mounted inside the Canvas; renders nothing. */
 export default function CapsuleFocus() {
-  const { camera, controls } = useThree() as any;
+  const { camera, controls, size } = useThree() as any;
   const { reducedMotion } = useScenePreferences();
   const last = useRef<string | null>(null);
   const t = useRef(1);
@@ -46,7 +46,8 @@ export default function CapsuleFocus() {
   useFrame((_, dt) => {
     const i = getSelected();
     const part = getSelectedPart();
-    const key = `${i}:${part}`;
+    const key = `${i}:${part}:${size.width}:${size.height}`;
+    const readingDistance = Math.max(READING, SCREEN.w * 1.12 / (2 * Math.tan(camera.fov * Math.PI / 360) * camera.aspect));
 
     if (last.current !== key) {
       // A new destination: remember where the move starts from, so the ease
@@ -65,7 +66,7 @@ export default function CapsuleFocus() {
         // Straight down the screen's normal, at reading distance: the file
         // fills the frame the way a plaque does when you lean over it.
         const f = screenFrame(i);
-        toPos.copy(f.center).addScaledVector(f.normal, READING);
+        toPos.copy(f.center).addScaledVector(f.normal, readingDistance);
         toTarget.copy(f.center);
       } else {
         const a = (i / 6) * Math.PI * 2;
@@ -88,7 +89,7 @@ export default function CapsuleFocus() {
         controls.enableZoom = i >= 0;
         const reading = i >= 0 && part === "pedestal";
         controls.minDistance = i < 0 ? 0 : reading ? READ_NEAREST : NEAREST;
-        controls.maxDistance = i < 0 ? Infinity : reading ? READ_FARTHEST : FARTHEST;
+        controls.maxDistance = i < 0 ? Infinity : reading ? Math.max(READ_FARTHEST, readingDistance * 1.4) : FARTHEST;
       }
     }
 
