@@ -47,8 +47,6 @@ export const STEPS: Step[] = [
       {
         num: "1.1",
         title: "Add your fal key",
-        stretch:
-          "Open miris/devApi.ts and find falKey. The key is read on the server and never sent to the browser, so it never shows up in the network tab.",
         body:
           "Sign in at fal.ai, create an API key, and paste it into a file called .env.local at the top of the project. Save it and press Done; the server reads the key on every request, so there is nothing to restart.",
         code: "FAL_KEY=your-key-here",
@@ -58,8 +56,6 @@ export const STEPS: Step[] = [
       {
         num: "1.2",
         title: "Describe your {noun}",
-        stretch:
-          "Before you press Grow, guess which clade the planner will pick and what it will call the six stages. Fur beats leg count, so a six-legged fox is planned as a mammal.",
         body:
           "Describe one {noun} in one sentence, or press the dice for a suggestion. Growing takes about twelve minutes and costs real money, so if you already have a series uploaded you can skip ahead.",
         panel: true,
@@ -76,8 +72,6 @@ export const STEPS: Step[] = [
       {
         num: "2.1",
         title: "Add the floor",
-        stretch:
-          "Change floorMaps(14) to floorMaps(8) above the return. The floor tiles get bigger without the room changing size.",
         body:
           "Add VaultFloor between the miris:scene comments in app/stage.tsx. It gives you the deck, the walls, the ceiling lights and the fog.",
         fill: "floor",
@@ -88,8 +82,6 @@ export const STEPS: Step[] = [
       {
         num: "2.2",
         title: "Add the walkway",
-        stretch:
-          "Change the walkway texture repeat from (6, 6) to (3, 3) above the return. Compare its scale with the floor around it.",
         body:
           "Add VaultWalkway after VaultFloor. It adds the raised ring you stand on, its lit edges, and the path to the door.",
         fill: "walkway",
@@ -100,8 +92,6 @@ export const STEPS: Step[] = [
       {
         num: "2.3",
         title: "Add the capsules",
-        stretch:
-          "Change the map to specimens.slice(0, 3) and half the capsules disappear while the rest stay put. Put it back before you continue.",
         body:
           "Add the specimen map after the walkway. Each entry places one VaultCapsule around the ring; the creatures arrive in the next step.",
         fill: "capsules",
@@ -112,8 +102,6 @@ export const STEPS: Step[] = [
       {
         num: "2.4",
         title: "Connect the streams",
-        stretch:
-          "Give one mirisStream a rotation prop. It turns like any other object in the scene.",
         body:
           "Add the stream map after the capsules. Each stream needs an asset id and a viewer key, so the tubes stay empty until section 3.",
         fill: "streams",
@@ -124,8 +112,6 @@ export const STEPS: Step[] = [
       {
         num: "2.5",
         title: "Fit each creature to its tube",
-        stretch:
-          "Change 0.08 in the rotation line to 0.04 for a slower turn, or 0.16 for a faster one.",
         body:
           "Replace the placeholder FitInGlass in the miris:parts block with this version. It measures each stream as it arrives, scales it to fit the glass, and slowly turns it.",
         fill: "fit",
@@ -136,8 +122,6 @@ export const STEPS: Step[] = [
       {
         num: "2.6",
         title: "Look around",
-        stretch:
-          "Set position to [0, 6, 0] and fov to 90 to look down on the ring from the ceiling. Then put it back.",
         body:
           "There is nothing to paste here; drag to look around the room. In the camera prop on Canvas, the middle number is your eye height and fov is how wide you see.",
         code: "camera={{ position: [0, 1.7, 0.02], fov: 55 }}",
@@ -153,8 +137,6 @@ export const STEPS: Step[] = [
       {
         num: "3.1",
         title: "Upload your meshes",
-        stretch:
-          "Keep the filenames numbered, like 01-egg.glb. Step 3.3 sorts by that number and names each capsule from the word after it.",
         body:
           "Download the archive from the tray, then sign in at app.miris.com and upload all six .glb files. Wait for processing to finish before the next step.",
         link: { href: PORTAL_URL, label: "Open Miris" },
@@ -162,8 +144,6 @@ export const STEPS: Step[] = [
       {
         num: "3.2",
         title: "Create a viewer key",
-        stretch:
-          "Make a second key scoped to only three assets and try it in 3.3. The other three capsules stay empty.",
         body:
           "In the portal, create a viewer key scoped to just these six assets. That key is the only thing you need to copy.",
         link: { href: PORTAL_URL, label: "Open Miris" },
@@ -181,9 +161,6 @@ try {
 } finally {
   scene.dispose();
 }`,
-
-        stretch:
-          "Watch a capsule fill. The whole creature arrives at low detail first and sharpens, which is what streaming looks like.",
         body:
           "Paste your viewer key and press Find my specimens. Check the order reads egg first and adult last, then seal all six.",
         capsuleUuid: true,
@@ -200,8 +177,6 @@ try {
       {
         num: "4.1",
         title: "Write the file in HTML",
-        stretch:
-          "Change the header text in fileMarkup. You will see it on a pedestal after step 4.3.",
         body:
           "Put this function in the miris:markup block above the return. It builds the specimen file as plain HTML, styled by miris/lab.css.",
         fill: "markup",
@@ -212,8 +187,6 @@ try {
       {
         num: "4.2",
         title: "Turn the HTML into a texture",
-        stretch:
-          "Swap meshBasicMaterial for meshStandardMaterial with the same map. The file now takes the room's light and looks dimmer.",
         body:
           "Add this under FitInGlass in the miris:parts block. It hands your markup to useHtmlTexture and puts the result on a plane.",
         fill: "file",
@@ -231,8 +204,6 @@ try {
         check: "cardOverlay",
         explain:
           "Pedestals places a screen in front of each tube and asks your File component to paint that specimen's file onto it. Clicks are tested against projected outlines, so none of your meshes needs a handler.",
-        stretch:
-          "Open a capsule and scroll. The wheel zooms between 1.2 and 3.2 metres from the glass.",
       },
     ],
   },
@@ -243,8 +214,6 @@ try {
       {
         num: "5.1",
         title: "Add the readout",
-        stretch:
-          "Hover a capsule that is half off the screen. The brackets follow its projected outline, and a capsule beside you has none.",
         body:
           "Add this line in the miris:hud block, outside the Canvas. It adds the header, the specimen count, and brackets around whatever your pointer is over.",
         fill: "hud",
@@ -259,14 +228,10 @@ try {
           "The readout shows how many splats are drawn, the current budget, and the frame time. Pin the budget at 40k, compare it with a higher one, then press Release to let the controller take over again.",
         explain:
           "The adaptive controller raises and lowers the total splat budget from the frame time, and the engine spends that budget where the camera is looking. Pinning the slider switches the controller off until you release it.",
-        stretch:
-          "Pin the budget at 40k and click a capsule. Watch where the detail goes as the camera arrives.",
       },
       {
         num: "5.3",
         title: "Add the screen effect",
-        stretch:
-          "Comment the line out and click a pedestal. The screen shows the file exactly as painted.",
         body:
           "Add this line at the bottom of app/stage.tsx, outside the Canvas, in the miris:effect block. Nothing changes until the next step gives it a shader.",
         fill: "effect",
@@ -277,8 +242,6 @@ try {
       {
         num: "5.4",
         title: "Write the glitch shader",
-        stretch:
-          "Lower 0.83 in the live line to 0.5 for tears on more ticks, or raise the shift from 0.014 to 0.03 to slide the rows further.",
         body:
           "Put this in the miris:field block above the return. It gives the selected screen scanlines, a blue phosphor tint, a faint flicker and the occasional signal tear.",
         fill: "field",
@@ -299,8 +262,6 @@ try {
           "Press Publish in Bolt, wait for your link, and send it to someone. Open it on a phone, tap a tube and a pedestal, then press Finish.",
         explain:
           "The published build has no dev server, so it reads a snapshot of your scene data written at build time. Everything else is the code you wrote in app/stage.tsx.",
-        stretch:
-          "Turn the phone between portrait and landscape and pinch to zoom on a screen. Tap empty space to return to the room.",
       },
     ],
   },
